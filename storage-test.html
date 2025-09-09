@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFill Pro - 统一键位存储测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .data-display {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AutoFill Pro - 统一键位存储测试</h1>
+        <div id="extension-status" class="status info">检测扩展状态中...</div>
+        
+        <div class="test-section">
+            <h2>1. 扩展检测</h2>
+            <button onclick="detectExtension()">检测扩展</button>
+            <div id="extension-info" class="log"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. 统一键位测试</h2>
+            <h3>用户档案 (sj_profile)</h3>
+            <button onclick="testProfileStorage()">测试档案存储</button>
+            <button onclick="loadProfile()">加载档案</button>
+            <button onclick="clearProfile()">清除档案</button>
+            <div>
+                <label>姓名:</label>
+                <input type="text" id="profile-name" placeholder="张三" value="张三">
+                <label>邮箱:</label>
+                <input type="text" id="profile-email" placeholder="zhangsan@example.com" value="zhangsan@example.com">
+                <label>手机:</label>
+                <input type="text" id="profile-phone" placeholder="13800138000" value="13800138000">
+                <label>微信:</label>
+                <input type="text" id="profile-wechat" placeholder="zhangsan_wx" value="zhangsan_wx">
+            </div>
+            <div id="profile-data" class="data-display"></div>
+
+            <h3>投递记录 (sj_applications)</h3>
+            <button onclick="testApplicationStorage()">测试投递记录存储</button>
+            <button onclick="loadApplications()">加载投递记录</button>
+            <button onclick="clearApplications()">清除投递记录</button>
+            <button onclick="addTestApplication()">添加测试记录</button>
+            <div>
+                <label>公司名称:</label>
+                <input type="text" id="app-company" placeholder="阿里巴巴" value="阿里巴巴">
+                <label>职位:</label>
+                <input type="text" id="app-position" placeholder="前端工程师" value="前端工程师">
+                <label>状态:</label>
+                <select id="app-status">
+                    <option value="applied">已投递</option>
+                    <option value="interview">面试中</option>
+                    <option value="offer">已录用</option>
+                    <option value="rejected">已拒绝</option>
+                </select>
+            </div>
+            <div id="applications-data" class="data-display"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. 数据迁移测试</h2>
+            <button onclick="testMigration()">测试旧键位迁移</button>
+            <button onclick="createLegacyData()">创建旧键位数据</button>
+            <button onclick="checkAllKeys()">检查所有键位</button>
+            <div id="migration-info" class="log"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. 消息传递测试</h2>
+            <button onclick="testStorageMessages()">测试存储消息</button>
+            <div id="message-log" class="log"></div>
+        </div>
+
+        <div id="test-log" class="log"></div>
+    </div>
+
+    <script>
+        let extensionId = null;
+        const SJ_KEYS = {
+            PROFILE: 'sj_profile',
+            APPLICATIONS: 'sj_applications'
+        };
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('test-log');
+            const logEntry = `[${timestamp}] ${message}`;
+            logElement.textContent += logEntry + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(logEntry);
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusElement = document.getElementById('extension-status');
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+        }
+
+        async function detectExtension() {
+            try {
+                log('开始检测扩展...');
+                
+                // 尝试检测扩展
+                if (typeof chrome !== 'undefined' && chrome.runtime) {
+                    try {
+                        const response = await chrome.runtime.sendMessage({ type: 'PING' });
+                        if (response) {
+                            extensionId = chrome.runtime.id;
+                            updateStatus('✅ 扩展已连接', 'success');
+                            log(`扩展ID: ${extensionId}`);
+                            document.getElementById('extension-info').textContent = `扩展ID: ${extensionId}\n响应: ${JSON.stringify(response, null, 2)}`;
+                            return true;
+                        }
+                    } catch (error) {
+                        log(`扩展通信失败: ${error.message}`, 'error');
+                    }
+                }
+                
+                updateStatus('❌ 扩展未检测到', 'error');
+                document.getElementById('extension-info').textContent = '扩展未检测到或未启用';
+                return false;
+            } catch (error) {
+                log(`检测扩展时出错: ${error.message}`, 'error');
+                updateStatus('❌ 检测失败', 'error');
+                return false;
+            }
+        }
+
+        async function testProfileStorage() {
+            try {
+                log('测试用户档案存储...');
+                
+                const profileData = {
+                    name: document.getElementById('profile-name').value,
+                    email: document.getElementById('profile-email').value,
+                    phone: document.getElementById('profile-phone').value,
+                    wechat: document.getElementById('profile-wechat').value,
+                    updatedAt: new Date().toISOString()
+                };
+
+                if (chrome && chrome.runtime) {
+                    const response = await chrome.runtime.sendMessage({
+                        type: 'SAVE_PROFILE',
+                        data: profileData
+                    });
+                    log(`档案保存响应: ${JSON.stringify(response)}`);
+                } else {
+                    // 直接使用 chrome.storage.local
+                    await chrome.storage.local.set({ [SJ_KEYS.PROFILE]: profileData });
+                    log('档案已保存到本地存储');
+                }
+                
+                document.getElementById('profile-data').textContent = JSON.stringify(profileData, null, 2);
+                log('✅ 用户档案存储测试完成');
+            } catch (error) {
+                log(`档案存储失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadProfile() {
+            try {
+                log('加载用户档案...');
+                
+                let profileData;
+                if (chrome && chrome.runtime) {
+                    const response = await chrome.runtime.sendMessage({
+                        type: 'GET_PROFILE'
+                    });
+                    profileData = response?.data;
+                } else {
+                    const result = await chrome.storage.local.get([SJ_KEYS.PROFILE]);
+                    profileData = result[SJ_KEYS.PROFILE];
+                }
+                
+                if (profileData) {
+                    document.getElementById('profile-name').value = profileData.name || '';
+                    document.getElementById('profile-email').value = profileData.email || '';
+                    document.getElementById('profile-phone').value = profileData.phone || '';
+                    document.getElementById('profile-wechat').value = profileData.wechat || '';
+                    document.getElementById('profile-data').textContent = JSON.stringify(profileData, null, 2);
+                    log('✅ 用户档案加载成功');
+                } else {
+                    document.getElementById('profile-data').textContent = '暂无档案数据';
+                    log('⚠️ 未找到用户档案', 'warning');
+                }
+            } catch (error) {
+                log(`加载档案失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function clearProfile() {
+            try {
+                log('清除用户档案...');
+                await chrome.storage.local.remove([SJ_KEYS.PROFILE]);
+                document.getElementById('profile-data').textContent = '';
+                log('✅ 用户档案已清除');
+            } catch (error) {
+                log(`清除档案失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testApplicationStorage() {
+            try {
+                log('测试投递记录存储...');
+                
+                const existingApps = await getApplications();
+                const newApp = {
+                    id: Date.now().toString(),
+                    company: document.getElementById('app-company').value,
+                    position: document.getElementById('app-position').value,
+                    status: document.getElementById('app-status').value,
+                    appliedAt: new Date().toISOString(),
+                    url: window.location.href
+                };
+                
+                const updatedApps = [...(existingApps || []), newApp];
+                await chrome.storage.local.set({ [SJ_KEYS.APPLICATIONS]: updatedApps });
+                
+                document.getElementById('applications-data').textContent = JSON.stringify(updatedApps, null, 2);
+                log('✅ 投递记录存储测试完成');
+            } catch (error) {
+                log(`投递记录存储失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function getApplications() {
+            try {
+                const result = await chrome.storage.local.get([SJ_KEYS.APPLICATIONS]);
+                return result[SJ_KEYS.APPLICATIONS] || [];
+            } catch (error) {
+                log(`获取投递记录失败: ${error.message}`, 'error');
+                return [];
+            }
+        }
+
+        async function loadApplications() {
+            try {
+                log('加载投递记录...');
+                const applications = await getApplications();
+                document.getElementById('applications-data').textContent = JSON.stringify(applications, null, 2);
+                log(`✅ 加载了 ${applications.length} 条投递记录`);
+            } catch (error) {
+                log(`加载投递记录失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function clearApplications() {
+            try {
+                log('清除投递记录...');
+                await chrome.storage.local.remove([SJ_KEYS.APPLICATIONS]);
+                document.getElementById('applications-data').textContent = '';
+                log('✅ 投递记录已清除');
+            } catch (error) {
+                log(`清除投递记录失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function addTestApplication() {
+            try {
+                const company = document.getElementById('app-company').value;
+                const position = document.getElementById('app-position').value;
+                const status = document.getElementById('app-status').value;
+                
+                if (!company || !position) {
+                    log('请填写公司名称和职位', 'warning');
+                    return;
+                }
+                
+                await testApplicationStorage();
+                await loadApplications();
+            } catch (error) {
+                log(`添加测试记录失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function createLegacyData() {
+            try {
+                log('创建旧键位测试数据...');
+                
+                // 创建一些旧键位数据
+                const legacyProfile = {
+                    name: '旧档案用户',
+                    email: 'legacy@example.com',
+                    phone: '13900139000'
+                };
+                
+                const legacyApps = [{
+                    id: 'legacy-1',
+                    company: '旧公司',
+                    position: '旧职位',
+                    status: 'applied',
+                    appliedAt: new Date().toISOString()
+                }];
+                
+                await chrome.storage.local.set({
+                    'profile': legacyProfile,
+                    'user_profile': legacyProfile,
+                    'applications': legacyApps,
+                    'job_tracker': legacyApps
+                });
+                
+                log('✅ 旧键位测试数据已创建');
+            } catch (error) {
+                log(`创建旧键位数据失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testMigration() {
+            try {
+                log('测试数据迁移...');
+                
+                if (chrome && chrome.runtime) {
+                    const response = await chrome.runtime.sendMessage({
+                        type: 'MIGRATE_LEGACY_KEYS'
+                    });
+                    log(`迁移响应: ${JSON.stringify(response)}`);
+                } else {
+                    log('无法测试迁移：需要扩展支持', 'warning');
+                }
+                
+                // 检查迁移结果
+                await checkAllKeys();
+            } catch (error) {
+                log(`迁移测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkAllKeys() {
+            try {
+                log('检查所有存储键位...');
+                
+                const allKeys = [
+                    SJ_KEYS.PROFILE,
+                    SJ_KEYS.APPLICATIONS,
+                    'profile',
+                    'user_profile',
+                    'applications',
+                    'job_tracker'
+                ];
+                
+                const result = await chrome.storage.local.get(allKeys);
+                const migrationInfo = document.getElementById('migration-info');
+                migrationInfo.textContent = JSON.stringify(result, null, 2);
+                
+                log('✅ 键位检查完成');
+                
+                // 统计信息
+                const hasNewProfile = !!result[SJ_KEYS.PROFILE];
+                const hasNewApps = !!result[SJ_KEYS.APPLICATIONS];
+                const hasLegacyData = !!(result.profile || result.user_profile || result.applications || result.job_tracker);
+                
+                log(`新键位档案: ${hasNewProfile ? '✅' : '❌'}`);
+                log(`新键位投递: ${hasNewApps ? '✅' : '❌'}`);
+                log(`旧键位数据: ${hasLegacyData ? '⚠️ 存在' : '✅ 已清理'}`);
+                
+            } catch (error) {
+                log(`检查键位失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testStorageMessages() {
+            try {
+                log('测试存储相关消息传递...');
+                
+                if (!chrome || !chrome.runtime) {
+                    log('Chrome 扩展 API 不可用', 'error');
+                    return;
+                }
+                
+                const messageLog = document.getElementById('message-log');
+                messageLog.textContent = '';
+                
+                // 测试各种消息类型
+                const messages = [
+                    { type: 'GET_PROFILE' },
+                    { type: 'GET_APPLICATIONS' },
+                    { type: 'GET_SETTINGS' },
+                    { type: 'PING' }
+                ];
+                
+                for (const message of messages) {
+                    try {
+                        const response = await chrome.runtime.sendMessage(message);
+                        const logEntry = `${message.type}: ${JSON.stringify(response)}\n`;
+                        messageLog.textContent += logEntry;
+                        log(`消息 ${message.type} 响应成功`);
+                    } catch (error) {
+                        const logEntry = `${message.type}: ERROR - ${error.message}\n`;
+                        messageLog.textContent += logEntry;
+                        log(`消息 ${message.type} 失败: ${error.message}`, 'error');
+                    }
+                }
+                
+                log('✅ 存储消息测试完成');
+            } catch (error) {
+                log(`存储消息测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 页面加载时自动检测扩展
+        document.addEventListener('DOMContentLoaded', async () => {
+            log('页面加载完成，开始自动检测...');
+            await detectExtension();
+            
+            // 自动加载现有数据
+            setTimeout(async () => {
+                await loadProfile();
+                await loadApplications();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

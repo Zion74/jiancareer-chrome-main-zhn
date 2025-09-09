@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFill Pro 功能测试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .test-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        .chinese-form {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 AutoFill Pro 功能测试页面</h1>
+        
+        <div class="test-info">
+            <h3>📋 测试说明</h3>
+            <p>此页面用于测试 AutoFill Pro 扩展的各项功能：</p>
+            <ul>
+                <li>✅ 浮窗显示和交互</li>
+                <li>✅ 表单字段自动识别</li>
+                <li>✅ 中英文字段映射</li>
+                <li>✅ 一键填写功能</li>
+                <li>✅ 投递记录功能</li>
+                <li>✅ 握手协议验证</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📝 英文求职表单 (English Job Application)</h2>
+        <form id="englishForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name *</label>
+                    <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name *</label>
+                    <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" placeholder="City, State">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="linkedin">LinkedIn Profile</label>
+                    <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                </div>
+                <div class="form-group">
+                    <label for="github">GitHub Profile</label>
+                    <input type="url" id="github" name="github" placeholder="https://github.com/yourusername">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="portfolio">Portfolio Website</label>
+                <input type="url" id="portfolio" name="portfolio" placeholder="https://yourportfolio.com">
+            </div>
+            
+            <button type="submit">Submit Application</button>
+        </form>
+    </div>
+
+    <div class="container chinese-form">
+        <h2>📝 中文求职表单 (Chinese Job Application)</h2>
+        <form id="chineseForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fullName">姓名 *</label>
+                    <input type="text" id="fullName" name="name" placeholder="请输入您的姓名" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">性别</label>
+                    <select id="gender" name="gender">
+                        <option value="">请选择</option>
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="mobile">手机号码 *</label>
+                    <input type="tel" id="mobile" name="phone" placeholder="请输入手机号码" required>
+                </div>
+                <div class="form-group">
+                    <label for="emailCn">邮箱地址 *</label>
+                    <input type="email" id="emailCn" name="email" placeholder="请输入邮箱地址" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="birthday">出生日期</label>
+                    <input type="date" id="birthday" name="birthday">
+                </div>
+                <div class="form-group">
+                    <label for="age">年龄</label>
+                    <input type="number" id="age" name="age" placeholder="请输入年龄" min="18" max="65">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="locationCn">所在城市</label>
+                <input type="text" id="locationCn" name="location" placeholder="请输入所在城市">
+            </div>
+            
+            <!-- 测试字段：验证热改功能 -->
+            <div class="form-group">
+                <label for="testField">测试字段:</label>
+                <input type="text" id="testField" name="testField" placeholder="测试字段">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="wechat">微信号</label>
+                    <input type="text" id="wechat" name="wechat" placeholder="请输入微信号">
+                </div>
+                <div class="form-group">
+                    <label for="qq">QQ号</label>
+                    <input type="text" id="qq" name="qq" placeholder="请输入QQ号">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="school">毕业院校</label>
+                    <input type="text" id="school" name="school" placeholder="请输入毕业院校">
+                </div>
+                <div class="form-group">
+                    <label for="major">专业</label>
+                    <input type="text" id="major" name="major" placeholder="请输入专业">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="graduation">毕业时间</label>
+                    <input type="month" id="graduation" name="graduation">
+                </div>
+                <div class="form-group">
+                    <label for="gpa">GPA</label>
+                    <input type="number" id="gpa" name="gpa" placeholder="请输入GPA" step="0.01" min="0" max="4">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="expectedSalary">期望薪资</label>
+                    <input type="text" id="expectedSalary" name="expectedSalary" placeholder="请输入期望薪资">
+                </div>
+                <div class="form-group">
+                    <label for="expectedPosition">期望职位</label>
+                    <input type="text" id="expectedPosition" name="expectedPosition" placeholder="请输入期望职位">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="selfIntroduction">自我介绍</label>
+                <textarea id="selfIntroduction" name="selfIntroduction" rows="4" placeholder="请简单介绍一下自己..."></textarea>
+            </div>
+            
+            <button type="submit">提交申请</button>
+        </form>
+    </div>
+
+    <script>
+        // 监听表单提交事件
+        document.getElementById('englishForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('English form submitted! 📧\n\nThis should be recorded in AutoFill Pro applications.');
+            console.log('English form submission detected');
+        });
+        
+        document.getElementById('chineseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('中文表单已提交！📧\n\n这应该被记录在 AutoFill Pro 的投递记录中。');
+            console.log('Chinese form submission detected');
+        });
+        
+        // 页面加载完成后的提示
+        window.addEventListener('load', function() {
+            console.log('🚀 AutoFill Pro 测试页面已加载');
+            console.log('请检查右上角是否出现 AutoFill Pro 浮窗');
+            
+            // 模拟公司和职位信息（用于测试投递记录）
+            window.testCompany = 'Test Company Ltd.';
+            window.testPosition = 'Frontend Developer';
+        });
+    </script>
+</body>
+</html>

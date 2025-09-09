@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFill Pro - 投递记录功能测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        button.success {
+            background: #28a745;
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        input, select, textarea {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .application-card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #fafafa;
+        }
+        .application-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .application-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+        .application-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-applied { background: #d1ecf1; color: #0c5460; }
+        .status-interview { background: #fff3cd; color: #856404; }
+        .status-offer { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        .application-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .job-form {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AutoFill Pro - 投递记录功能测试</h1>
+        <div id="extension-status" class="status info">检测扩展状态中...</div>
+        
+        <div class="test-section">
+            <h2>1. 扩展检测与连接</h2>
+            <button onclick="detectExtension()">检测扩展</button>
+            <button onclick="testConnection()">测试连接</button>
+            <div id="connection-info" class="log"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. 投递记录统计</h2>
+            <button onclick="loadStatistics()">加载统计数据</button>
+            <div class="stats-grid" id="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-applications">0</div>
+                    <div class="stat-label">总投递数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pending-applications">0</div>
+                    <div class="stat-label">待回复</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="interview-applications">0</div>
+                    <div class="stat-label">面试中</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="success-rate">0%</div>
+                    <div class="stat-label">成功率</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. 添加投递记录</h2>
+            <div class="job-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="company-name">公司名称</label>
+                        <input type="text" id="company-name" placeholder="请输入公司名称" value="字节跳动">
+                    </div>
+                    <div class="form-group">
+                        <label for="position-title">职位名称</label>
+                        <input type="text" id="position-title" placeholder="请输入职位名称" value="前端开发工程师">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="job-url">职位链接</label>
+                        <input type="url" id="job-url" placeholder="请输入职位链接" value="https://jobs.bytedance.com/position/123">
+                    </div>
+                    <div class="form-group">
+                        <label for="application-status">申请状态</label>
+                        <select id="application-status">
+                            <option value="applied">已投递</option>
+                            <option value="interview">面试中</option>
+                            <option value="offer">已录用</option>
+                            <option value="rejected">已拒绝</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="salary-range">薪资范围</label>
+                        <input type="text" id="salary-range" placeholder="如：15k-25k" value="20k-30k">
+                    </div>
+                    <div class="form-group">
+                        <label for="work-location">工作地点</label>
+                        <input type="text" id="work-location" placeholder="请输入工作地点" value="北京">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="application-notes">备注</label>
+                        <textarea id="application-notes" placeholder="投递备注信息" rows="3">通过官网投递，HR已回复安排面试</textarea>
+                    </div>
+                </div>
+                <button onclick="addApplication()">添加投递记录</button>
+                <button onclick="addTestApplications()">添加测试数据</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. 投递记录管理</h2>
+            <button onclick="loadApplications()">加载所有记录</button>
+            <button onclick="exportApplications()">导出记录</button>
+            <button onclick="clearAllApplications()" class="danger">清空所有记录</button>
+            <div id="applications-container"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>5. 消息传递测试</h2>
+            <button onclick="testApplicationMessages()">测试投递消息</button>
+            <button onclick="testRecordSubmission()">测试记录提交</button>
+            <div id="message-test-log" class="log"></div>
+        </div>
+
+        <div id="test-log" class="log"></div>
+    </div>
+
+    <script>
+        let extensionId = null;
+        let applications = [];
+        const SJ_KEYS = {
+            APPLICATIONS: 'sj_applications'
+        };
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('test-log');
+            const logEntry = `[${timestamp}] ${message}`;
+            logElement.textContent += logEntry + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(logEntry);
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusElement = document.getElementById('extension-status');
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+        }
+
+        async function detectExtension() {
+            try {
+                log('开始检测扩展...');
+                
+                if (typeof chrome !== 'undefined' && chrome.runtime) {
+                    try {
+                        const response = await chrome.runtime.sendMessage({ type: 'PING' });
+                        if (response) {
+                            extensionId = chrome.runtime.id;
+                            updateStatus('✅ 扩展已连接', 'success');
+                            log(`扩展ID: ${extensionId}`);
+                            document.getElementById('connection-info').textContent = `扩展ID: ${extensionId}\n响应: ${JSON.stringify(response, null, 2)}`;
+                            return true;
+                        }
+                    } catch (error) {
+                        log(`扩展通信失败: ${error.message}`, 'error');
+                    }
+                }
+                
+                updateStatus('❌ 扩展未检测到', 'error');
+                document.getElementById('connection-info').textContent = '扩展未检测到或未启用';
+                return false;
+            } catch (error) {
+                log(`检测扩展时出错: ${error.message}`, 'error');
+                updateStatus('❌ 检测失败', 'error');
+                return false;
+            }
+        }
+
+        async function testConnection() {
+            try {
+                log('测试扩展连接...');
+                
+                if (!chrome || !chrome.runtime) {
+                    log('Chrome 扩展 API 不可用', 'error');
+                    return;
+                }
+                
+                const messages = [
+                    { type: 'GET_APPLICATIONS' },
+                    { type: 'GET_TAB_INFO' },
+                    { type: 'PING' }
+                ];
+                
+                const connectionInfo = document.getElementById('connection-info');
+                let logText = '';
+                
+                for (const message of messages) {
+                    try {
+                        const response = await chrome.runtime.sendMessage(message);
+                        logText += `${message.type}: ✅ 成功\n`;
+                        log(`消息 ${message.type} 测试成功`);
+                    } catch (error) {
+                        logText += `${message.type}: ❌ 失败 - ${error.message}\n`;
+                        log(`消息 ${message.type} 测试失败: ${error.message}`, 'error');
+                    }
+                }
+                
+                connectionInfo.textContent = logText;
+                log('✅ 连接测试完成');
+            } catch (error) {
+                log(`连接测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadStatistics() {
+            try {
+                log('加载投递统计数据...');
+                
+                const apps = await getApplications();
+                applications = apps;
+                
+                const total = apps.length;
+                const pending = apps.filter(app => app.status === 'applied').length;
+                const interview = apps.filter(app => app.status === 'interview').length;
+                const offers = apps.filter(app => app.status === 'offer').length;
+                const rejected = apps.filter(app => app.status === 'rejected').length;
+                
+                const successRate = total > 0 ? Math.round((offers / total) * 100) : 0;
+                
+                document.getElementById('total-applications').textContent = total;
+                document.getElementById('pending-applications').textContent = pending;
+                document.getElementById('interview-applications').textContent = interview;
+                document.getElementById('success-rate').textContent = `${successRate}%`;
+                
+                log(`✅ 统计数据加载完成: 总计${total}条，待回复${pending}条，面试中${interview}条，成功率${successRate}%`);
+            } catch (error) {
+                log(`加载统计数据失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function getApplications() {
+            try {
+                if (chrome && chrome.runtime) {
+                    const response = await chrome.runtime.sendMessage({
+                        type: 'GET_APPLICATIONS'
+                    });
+                    return response?.data || [];
+                } else {
+                    const result = await chrome.storage.local.get([SJ_KEYS.APPLICATIONS]);
+                    return result[SJ_KEYS.APPLICATIONS] || [];
+                }
+            } catch (error) {
+                log(`获取投递记录失败: ${error.message}`, 'error');
+                return [];
+            }
+        }
+
+        async function addApplication() {
+            try {
+                log('添加投递记录...');
+                
+                const company = document.getElementById('company-name').value.trim();
+                const position = document.getElementById('position-title').value.trim();
+                const url = document.getElementById('job-url').value.trim();
+                const status = document.getElementById('application-status').value;
+                const salary = document.getElementById('salary-range').value.trim();
+                const location = document.getElementById('work-location').value.trim();
+                const notes = document.getElementById('application-notes').value.trim();
+                
+                if (!company || !position) {
+                    log('请填写公司名称和职位名称', 'warning');
+                    return;
+                }
+                
+                const newApplication = {
+                    id: Date.now().toString(),
+                    company,
+                    position,
+                    url,
+                    status,
+                    salary,
+                    location,
+                    notes,
+                    appliedAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                const existingApps = await getApplications();
+                const updatedApps = [...existingApps, newApplication];
+                
+                if (chrome && chrome.runtime) {
+                    const response = await chrome.runtime.sendMessage({
+                        type: 'SAVE_APPLICATIONS',
+                        data: updatedApps
+                    });
+                    log(`投递记录保存响应: ${JSON.stringify(response)}`);
+                } else {
+                    await chrome.storage.local.set({ [SJ_KEYS.APPLICATIONS]: updatedApps });
+                }
+                
+                log(`✅ 投递记录已添加: ${company} - ${position}`);
+                
+                // 刷新显示
+                await loadStatistics();
+                await loadApplications();
+                
+            } catch (error) {
+                log(`添加投递记录失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function addTestApplications() {
+            try {
+                log('添加测试投递数据...');
+                
+                const testApps = [
+                    {
+                        id: `test-${Date.now()}-1`,
+                        company: '阿里巴巴',
+                        position: '高级前端工程师',
+                        url: 'https://job.alibaba.com/zhaopin/position_detail.htm?positionId=123',
+                        status: 'interview',
+                        salary: '25k-40k',
+                        location: '杭州',
+                        notes: '通过内推投递，已安排技术面试',
+                        appliedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+                        updatedAt: new Date().toISOString()
+                    },
+                    {
+                        id: `test-${Date.now()}-2`,
+                        company: '腾讯',
+                        position: 'Web前端开发工程师',
+                        url: 'https://careers.tencent.com/jobdesc.html?postId=456',
+                        status: 'applied',
+                        salary: '20k-35k',
+                        location: '深圳',
+                        notes: '官网投递，等待HR回复',
+                        appliedAt: new Date(Date.now() - 86400000 * 1).toISOString(),
+                        updatedAt: new Date().toISOString()
+                    },
+                    {
+                        id: `test-${Date.now()}-3`,
+                        company: '美团',
+                        position: '前端开发工程师',
+                        url: 'https://zhaopin.meituan.com/web/position/789',
+                        status: 'offer',
+                        salary: '22k-32k',
+                        location: '北京',
+                        notes: '已收到offer，待确认',
+                        appliedAt: new Date(Date.now() - 86400000 * 7).toISOString(),
+                        updatedAt: new Date().toISOString()
+                    },
+                    {
+                        id: `test-${Date.now()}-4`,
+                        company: '百度',
+                        position: '资深前端工程师',
+                        url: 'https://talent.baidu.com/external/baidu/index.html#/jobDetail/2/101',
+                        status: 'rejected',
+                        salary: '18k-28k',
+                        location: '北京',
+                        notes: '技术面试未通过',
+                        appliedAt: new Date(Date.now() - 86400000 * 14).toISOString(),
+                        updatedAt: new Date().toISOString()
+                    }
+                ];
+                
+                const existingApps = await getApplications();
+                const updatedApps = [...existingApps, ...testApps];
+                
+                await chrome.storage.local.set({ [SJ_KEYS.APPLICATIONS]: updatedApps });
+                
+                log(`✅ 已添加 ${testApps.length} 条测试投递记录`);
+                
+                // 刷新显示
+                await loadStatistics();
+                await loadApplications();
+                
+            } catch (error) {
+                log(`添加测试数据失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadApplications() {
+            try {
+                log('加载投递记录列表...');
+                
+                const apps = await getApplications();
+                applications = apps;
+                
+                const container = document.getElementById('applications-container');
+                
+                if (apps.length === 0) {
+                    container.innerHTML = '<div class="application-card"><p>暂无投递记录</p></div>';
+                    return;
+                }
+                
+                let html = '';
+                apps.sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt));
+                
+                apps.forEach(app => {
+                    const appliedDate = new Date(app.appliedAt).toLocaleDateString('zh-CN');
+                    const statusClass = `status-${app.status}`;
+                    const statusText = {
+                        'applied': '已投递',
+                        'interview': '面试中',
+                        'offer': '已录用',
+                        'rejected': '已拒绝'
+                    }[app.status] || app.status;
+                    
+                    html += `
+                        <div class="application-card">
+                            <div class="application-header">
+                                <div class="application-title">${app.company} - ${app.position}</div>
+                                <div class="application-status ${statusClass}">${statusText}</div>
+                            </div>
+                            <div class="application-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">投递时间:</span>
+                                    <span>${appliedDate}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">薪资范围:</span>
+                                    <span>${app.salary || '未填写'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">工作地点:</span>
+                                    <span>${app.location || '未填写'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">职位链接:</span>
+                                    <span>${app.url ? `<a href="${app.url}" target="_blank">查看</a>` : '未填写'}</span>
+                                </div>
+                            </div>
+                            ${app.notes ? `<div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; font-size: 12px;"><strong>备注:</strong> ${app.notes}</div>` : ''}
+                            <div style="margin-top: 10px;">
+                                <button onclick="updateApplicationStatus('${app.id}', 'interview')" style="font-size: 12px; padding: 5px 10px;">标记面试</button>
+                                <button onclick="updateApplicationStatus('${app.id}', 'offer')" style="font-size: 12px; padding: 5px 10px;">标记录用</button>
+                                <button onclick="updateApplicationStatus('${app.id}', 'rejected')" style="font-size: 12px; padding: 5px 10px;">标记拒绝</button>
+                                <button onclick="deleteApplication('${app.id}')" class="danger" style="font-size: 12px; padding: 5px 10px;">删除</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                log(`✅ 加载了 ${apps.length} 条投递记录`);
+                
+            } catch (error) {
+                log(`加载投递记录失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function updateApplicationStatus(appId, newStatus) {
+            try {
+                log(`更新投递记录状态: ${appId} -> ${newStatus}`);
+                
+                const apps = await getApplications();
+                const updatedApps = apps.map(app => {
+                    if (app.id === appId) {
+                        return { ...app, status: newStatus, updatedAt: new Date().toISOString() };
+                    }
+                    return app;
+                });
+                
+                await chrome.storage.local.set({ [SJ_KEYS.APPLICATIONS]: updatedApps });
+                
+                log('✅ 投递记录状态已更新');
+                
+                // 刷新显示
+                await loadStatistics();
+                await loadApplications();
+                
+            } catch (error) {
+                log(`更新投递记录失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function deleteApplication(appId) {
+            try {
+                if (!confirm('确定要删除这条投递记录吗？')) {
+                    return;
+                }
+                
+                log(`删除投递记录: ${appId}`);
+                
+                const apps = await getApplications();
+                const updatedApps = apps.filter(app => app.id !== appId);
+                
+                await chrome.storage.local.set({ [SJ_KEYS.APPLICATIONS]: updatedApps });
+                
+                log('✅ 投递记录已删除');
+                
+                // 刷新显示
+                await loadStatistics();
+                await loadApplications();
+                
+            } catch (error) {
+                log(`删除投递记录失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function exportApplications() {
+            try {
+                log('导出投递记录...');
+                
+                const apps = await getApplications();
+                if (apps.length === 0) {
+                    log('没有投递记录可导出', 'warning');
+                    return;
+                }
+                
+                const csvContent = generateCSV(apps);
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `投递记录_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                log(`✅ 投递记录已导出 (${apps.length} 条记录)`);
+                
+            } catch (error) {
+                log(`导出投递记录失败: ${error.message}`, 'error');
+            }
+        }
+
+        function generateCSV(apps) {
+            const headers = ['公司名称', '职位名称', '申请状态', '薪资范围', '工作地点', '投递时间', '职位链接', '备注'];
+            const rows = apps.map(app => [
+                app.company,
+                app.position,
+                app.status,
+                app.salary || '',
+                app.location || '',
+                new Date(app.appliedAt).toLocaleDateString('zh-CN'),
+                app.url || '',
+                app.notes || ''
+            ]);
+            
+            return [headers, ...rows].map(row => 
+                row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')
+            ).join('\n');
+        }
+
+        async function clearAllApplications() {
+            try {
+                if (!confirm('确定要清空所有投递记录吗？此操作不可恢复！')) {
+                    return;
+                }
+                
+                log('清空所有投递记录...');
+                
+                await chrome.storage.local.remove([SJ_KEYS.APPLICATIONS]);
+                
+                log('✅ 所有投递记录已清空');
+                
+                // 刷新显示
+                await loadStatistics();
+                await loadApplications();
+                
+            } catch (error) {
+                log(`清空投递记录失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testApplicationMessages() {
+            try {
+                log('测试投递相关消息传递...');
+                
+                if (!chrome || !chrome.runtime) {
+                    log('Chrome 扩展 API 不可用', 'error');
+                    return;
+                }
+                
+                const messageLog = document.getElementById('message-test-log');
+                messageLog.textContent = '';
+                
+                const messages = [
+                    { type: 'GET_APPLICATIONS' },
+                    { type: 'SAVE_APPLICATIONS', data: [] },
+                    { type: 'RECORD_APPLICATION', data: { company: '测试公司', position: '测试职位' } }
+                ];
+                
+                for (const message of messages) {
+                    try {
+                        const response = await chrome.runtime.sendMessage(message);
+                        const logEntry = `${message.type}: ✅ ${JSON.stringify(response)}\n`;
+                        messageLog.textContent += logEntry;
+                        log(`消息 ${message.type} 测试成功`);
+                    } catch (error) {
+                        const logEntry = `${message.type}: ❌ ${error.message}\n`;
+                        messageLog.textContent += logEntry;
+                        log(`消息 ${message.type} 测试失败: ${error.message}`, 'error');
+                    }
+                }
+                
+                log('✅ 投递消息测试完成');
+            } catch (error) {
+                log(`投递消息测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testRecordSubmission() {
+            try {
+                log('测试记录提交功能...');
+                
+                if (!chrome || !chrome.runtime) {
+                    log('Chrome 扩展 API 不可用', 'error');
+                    return;
+                }
+                
+                // 模拟表单提交后的记录
+                const submissionData = {
+                    company: '测试提交公司',
+                    position: '测试提交职位',
+                    url: window.location.href,
+                    submittedAt: new Date().toISOString()
+                };
+                
+                const response = await chrome.runtime.sendMessage({
+                    type: 'RECORD_SUBMISSION',
+                    data: submissionData
+                });
+                
+                log(`记录提交响应: ${JSON.stringify(response)}`);
+                log('✅ 记录提交测试完成');
+                
+                // 刷新显示
+                setTimeout(async () => {
+                    await loadStatistics();
+                    await loadApplications();
+                }, 1000);
+                
+            } catch (error) {
+                log(`记录提交测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 页面加载时自动检测和加载数据
+        document.addEventListener('DOMContentLoaded', async () => {
+            log('页面加载完成，开始自动检测...');
+            await detectExtension();
+            
+            setTimeout(async () => {
+                await loadStatistics();
+                await loadApplications();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

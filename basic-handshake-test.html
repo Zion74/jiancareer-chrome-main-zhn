@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基础握手测试 - AutoFill Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-item {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .pending { background: #fff3cd; color: #856404; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .form-test {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .form-test input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤝 基础握手协议测试</h1>
+        
+        <div class="test-item">
+            <h3>1. 扩展检测</h3>
+            <button onclick="checkExtension()">检测扩展</button>
+            <span id="ext-status" class="status pending">待检测</span>
+            <div id="ext-info"></div>
+        </div>
+
+        <div class="test-item">
+            <h3>2. 字段映射检测</h3>
+            <button onclick="checkMappings()">检测映射</button>
+            <span id="map-status" class="status pending">待检测</span>
+            <div id="map-info"></div>
+        </div>
+
+        <div class="test-item">
+            <h3>3. 握手协议测试</h3>
+            <button onclick="testHandshake()">测试握手</button>
+            <span id="handshake-status" class="status pending">待测试</span>
+            <div id="handshake-info"></div>
+        </div>
+
+        <div class="test-item">
+            <h3>4. 消息传递测试</h3>
+            <button onclick="testMessages()">测试消息</button>
+            <span id="msg-status" class="status pending">待测试</span>
+            <div id="msg-info"></div>
+        </div>
+
+        <div class="test-item">
+            <h3>5. 表单测试</h3>
+            <form id="test-form">
+                <div class="form-test">
+                    <input type="text" id="firstName" name="firstName" placeholder="名字">
+                    <input type="text" id="lastName" name="lastName" placeholder="姓氏">
+                    <input type="email" id="email" name="email" placeholder="邮箱">
+                    <input type="tel" id="phone" name="phone" placeholder="手机">
+                    <input type="text" id="wechat" name="wechat" placeholder="微信">
+                    <input type="text" id="testField" name="testField" placeholder="测试字段">
+                </div>
+            </form>
+            <button onclick="testFormDetection()">检测表单</button>
+            <button onclick="testFormFill()">填写表单</button>
+            <span id="form-status" class="status pending">待测试</span>
+        </div>
+
+        <div class="test-item">
+            <h3>6. 测试日志</h3>
+            <button onclick="clearLog()">清空日志</button>
+            <div id="test-log" class="log">等待测试开始...</div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('test-log');
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[握手测试] ${message}`);
+        }
+
+        function updateStatus(id, status, text) {
+            const element = document.getElementById(id);
+            element.className = `status ${status}`;
+            element.textContent = text;
+        }
+
+        function updateInfo(id, info) {
+            const element = document.getElementById(id);
+            element.innerHTML = `<pre style="margin:10px 0; font-size:11px;">${JSON.stringify(info, null, 2)}</pre>`;
+        }
+
+        // 1. 检测扩展
+        function checkExtension() {
+            log('开始检测扩展状态...');
+            
+            const hasChrome = typeof chrome !== 'undefined' && chrome.runtime;
+            const hasMappings = !!window.__SJ_FIELD_MAPPINGS__;
+            const hasWidget = document.querySelector('#sj-autofill-tutor') !== null;
+            
+            const info = {
+                'Chrome API': hasChrome,
+                '字段映射': hasMappings,
+                '浮窗组件': hasWidget,
+                '页面URL': window.location.href
+            };
+            
+            updateInfo('ext-info', info);
+            
+            if (hasChrome && hasMappings) {
+                updateStatus('ext-status', 'success', '扩展正常');
+                log('扩展检测完成: 正常');
+            } else {
+                updateStatus('ext-status', 'error', '扩展异常');
+                log('扩展检测完成: 异常');
+            }
+        }
+
+        // 2. 检测字段映射
+        function checkMappings() {
+            log('开始检测字段映射...');
+            
+            try {
+                const mappings = window.__SJ_FIELD_MAPPINGS__;
+                
+                if (!mappings) {
+                    throw new Error('字段映射未加载');
+                }
+                
+                const info = {
+                    '映射状态': '已加载',
+                    '字段数量': Object.keys(mappings).length,
+                    '包含字段': Object.keys(mappings).slice(0, 5).join(', ') + '...',
+                    '中文支持': mappings.wechat ? '是' : '否'
+                };
+                
+                updateInfo('map-info', info);
+                updateStatus('map-status', 'success', '映射正常');
+                log(`字段映射检测完成: ${Object.keys(mappings).length} 个字段`);
+                
+            } catch (error) {
+                updateStatus('map-status', 'error', '映射异常');
+                updateInfo('map-info', { error: error.message });
+                log(`字段映射检测失败: ${error.message}`);
+            }
+        }
+
+        // 3. 测试握手协议
+        async function testHandshake() {
+            log('开始测试握手协议...');
+            
+            try {
+                if (typeof chrome === 'undefined' || !chrome.runtime) {
+                    throw new Error('Chrome扩展API不可用');
+                }
+                
+                const startTime = Date.now();
+                
+                const response = await new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => {
+                        reject(new Error('握手超时'));
+                    }, 5000);
+                    
+                    chrome.runtime.sendMessage({
+                        type: 'HANDSHAKE',
+                        payload: {
+                            url: window.location.href,
+                            domain: window.location.hostname,
+                            timestamp: new Date().toISOString()
+                        }
+                    }, (response) => {
+                        clearTimeout(timeout);
+                        if (chrome.runtime.lastError) {
+                            reject(new Error(chrome.runtime.lastError.message));
+                        } else {
+                            resolve(response);
+                        }
+                    });
+                });
+                
+                const responseTime = Date.now() - startTime;
+                
+                const info = {
+                    '握手状态': response?.success ? '成功' : '失败',
+                    '响应时间': `${responseTime}ms`,
+                    '响应数据': response
+                };
+                
+                updateInfo('handshake-info', info);
+                
+                if (response && response.success) {
+                    updateStatus('handshake-status', 'success', '握手成功');
+                    log(`握手协议测试完成: 成功 (${responseTime}ms)`);
+                } else {
+                    updateStatus('handshake-status', 'error', '握手失败');
+                    log('握手协议测试完成: 失败');
+                }
+                
+            } catch (error) {
+                updateStatus('handshake-status', 'error', '测试失败');
+                updateInfo('handshake-info', { error: error.message });
+                log(`握手协议测试失败: ${error.message}`);
+            }
+        }
+
+        // 4. 测试消息传递
+        async function testMessages() {
+            log('开始测试消息传递...');
+            
+            try {
+                const messages = [
+                    { type: 'GET_HANDSHAKE_STATUS' },
+                    { type: 'GET_TAB_INFO' },
+                    { type: 'GET_SJ_PROFILE' }
+                ];
+                
+                const results = {};
+                
+                for (const message of messages) {
+                    try {
+                        const response = await new Promise((resolve, reject) => {
+                            const timeout = setTimeout(() => {
+                                reject(new Error('消息超时'));
+                            }, 3000);
+                            
+                            chrome.runtime.sendMessage(message, (response) => {
+                                clearTimeout(timeout);
+                                if (chrome.runtime.lastError) {
+                                    reject(new Error(chrome.runtime.lastError.message));
+                                } else {
+                                    resolve(response);
+                                }
+                            });
+                        });
+                        
+                        results[message.type] = { success: true, response };
+                        log(`${message.type}: 成功`);
+                    } catch (error) {
+                        results[message.type] = { success: false, error: error.message };
+                        log(`${message.type}: 失败 - ${error.message}`);
+                    }
+                }
+                
+                updateInfo('msg-info', results);
+                
+                const successCount = Object.values(results).filter(r => r.success).length;
+                if (successCount === messages.length) {
+                    updateStatus('msg-status', 'success', '消息正常');
+                    log('消息传递测试完成: 全部成功');
+                } else {
+                    updateStatus('msg-status', 'error', `${successCount}/${messages.length} 成功`);
+                    log(`消息传递测试完成: ${successCount}/${messages.length} 成功`);
+                }
+                
+            } catch (error) {
+                updateStatus('msg-status', 'error', '测试失败');
+                updateInfo('msg-info', { error: error.message });
+                log(`消息传递测试失败: ${error.message}`);
+            }
+        }
+
+        // 5. 测试表单检测
+        async function testFormDetection() {
+            log('开始测试表单检测...');
+            
+            try {
+                const response = await new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => {
+                        reject(new Error('检测超时'));
+                    }, 3000);
+                    
+                    chrome.runtime.sendMessage({
+                        type: 'DETECT_FORMS'
+                    }, (response) => {
+                        clearTimeout(timeout);
+                        if (chrome.runtime.lastError) {
+                            reject(new Error(chrome.runtime.lastError.message));
+                        } else {
+                            resolve(response);
+                        }
+                    });
+                });
+                
+                const forms = document.querySelectorAll('form');
+                const inputs = document.querySelectorAll('input');
+                
+                log(`表单检测完成: 发现 ${forms.length} 个表单, ${inputs.length} 个输入框`);
+                updateStatus('form-status', 'success', '检测完成');
+                
+            } catch (error) {
+                log(`表单检测失败: ${error.message}`);
+                updateStatus('form-status', 'error', '检测失败');
+            }
+        }
+
+        // 测试表单填写
+        function testFormFill() {
+            log('开始测试表单填写...');
+            
+            const testData = {
+                firstName: '测试',
+                lastName: '用户',
+                email: 'test@example.com',
+                phone: '13800138000',
+                wechat: 'test_wechat',
+                testField: '热改测试'
+            };
+            
+            let filledCount = 0;
+            
+            Object.entries(testData).forEach(([fieldName, value]) => {
+                const input = document.getElementById(fieldName);
+                if (input) {
+                    input.value = value;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    filledCount++;
+                }
+            });
+            
+            log(`表单填写完成: ${filledCount}/${Object.keys(testData).length} 个字段`);
+            updateStatus('form-status', 'success', '填写完成');
+        }
+
+        function clearLog() {
+            document.getElementById('test-log').innerHTML = '日志已清空...';
+        }
+
+        // 页面加载后自动开始检测
+        window.addEventListener('load', () => {
+            log('页面加载完成，开始自动检测...');
+            setTimeout(() => {
+                checkExtension();
+                setTimeout(() => {
+                    checkMappings();
+                }, 500);
+            }, 1000);
+        });
+
+        // 监听扩展消息
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+            chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+                log(`收到扩展消息: ${JSON.stringify(message)}`);
+                sendResponse({ received: true });
+                return true;
+            });
+        }
+    </script>
+</body>
+</html>

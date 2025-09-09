@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFill Pro 简化测试页面</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .form-section h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        .status-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 300px;
+            z-index: 1000;
+        }
+        .status-item {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .status-ok { color: #28a745; }
+        .status-error { color: #dc3545; }
+        .status-pending { color: #ffc107; }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 AutoFill Pro 扩展测试</h1>
+        
+        <!-- 状态面板 -->
+        <div class="status-panel" id="statusPanel">
+            <h4>📊 扩展状态</h4>
+            <div class="status-item" id="extensionStatus">⏳ 检测扩展中...</div>
+            <div class="status-item" id="mappingStatus">⏳ 检测字段映射...</div>
+            <div class="status-item" id="widgetStatus">⏳ 检测浮窗...</div>
+            <div class="status-item" id="formStatus">⏳ 等待表单检测...</div>
+        </div>
+
+        <!-- 测试控制面板 -->
+        <div class="form-section">
+            <h3>🎮 测试控制面板</h3>
+            <button class="test-button" onclick="testExtensionStatus()">检测扩展状态</button>
+            <button class="test-button" onclick="testFieldMapping()">测试字段映射</button>
+            <button class="test-button" onclick="testHandshake()">测试握手协议</button>
+            <button class="test-button" onclick="testStorage()">测试统一键位</button>
+        </div>
+
+        <!-- 基本信息表单 -->
+        <div class="form-section">
+            <h3>👤 基本信息</h3>
+            <div class="form-group">
+                <label for="firstName">姓名 (First Name)</label>
+                <input type="text" id="firstName" name="firstName" placeholder="请输入姓名">
+            </div>
+            <div class="form-group">
+                <label for="lastName">姓氏 (Last Name)</label>
+                <input type="text" id="lastName" name="lastName" placeholder="请输入姓氏">
+            </div>
+            <div class="form-group">
+                <label for="email">邮箱 (Email)</label>
+                <input type="email" id="email" name="email" placeholder="请输入邮箱地址">
+            </div>
+            <div class="form-group">
+                <label for="phone">手机号码</label>
+                <input type="tel" id="phone" name="phone" placeholder="请输入手机号码">
+            </div>
+        </div>
+
+        <!-- 联系方式 -->
+        <div class="form-section">
+            <h3>📱 联系方式</h3>
+            <div class="form-group">
+                <label for="wechat">微信号</label>
+                <input type="text" id="wechat" name="wechat" placeholder="请输入微信号">
+            </div>
+            <div class="form-group">
+                <label for="qq">QQ号码</label>
+                <input type="text" id="qq" name="qq" placeholder="请输入QQ号码">
+            </div>
+            <div class="form-group">
+                <label for="linkedin">LinkedIn</label>
+                <input type="text" id="linkedin" name="linkedin" placeholder="请输入LinkedIn链接">
+            </div>
+        </div>
+
+        <!-- 测试字段 -->
+        <div class="form-section">
+            <h3>🧪 测试字段</h3>
+            <div class="form-group">
+                <label for="testField">测试字段 (用于验证热改功能)</label>
+                <input type="text" id="testField" name="testField" placeholder="这是测试字段">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 扩展状态检测
+        function updateStatus(elementId, status, message) {
+            const element = document.getElementById(elementId);
+            element.className = `status-item status-${status}`;
+            element.textContent = message;
+        }
+
+        // 检测扩展是否加载
+        function testExtensionStatus() {
+            console.log('🔍 开始检测扩展状态...');
+            
+            // 检测 Chrome 扩展 API
+            if (typeof chrome !== 'undefined' && chrome.runtime) {
+                updateStatus('extensionStatus', 'ok', '✅ Chrome 扩展 API 可用');
+                
+                // 尝试发送消息测试扩展连接
+                chrome.runtime.sendMessage({type: 'PING'}, (response) => {
+                    if (chrome.runtime.lastError) {
+                        updateStatus('extensionStatus', 'error', '❌ 扩展未响应');
+                        console.error('扩展连接失败:', chrome.runtime.lastError);
+                    } else {
+                        updateStatus('extensionStatus', 'ok', '✅ 扩展连接正常');
+                        console.log('✅ 扩展响应:', response);
+                    }
+                });
+            } else {
+                updateStatus('extensionStatus', 'error', '❌ Chrome 扩展 API 不可用');
+                console.error('❌ Chrome 扩展环境未检测到');
+            }
+        }
+
+        // 测试字段映射
+        function testFieldMapping() {
+            console.log('🔍 开始测试字段映射...');
+            
+            if (window.__SJ_FIELD_MAPPINGS__) {
+                updateStatus('mappingStatus', 'ok', '✅ 字段映射已加载');
+                console.log('✅ 字段映射对象:', window.__SJ_FIELD_MAPPINGS__);
+                console.log('📊 映射字段数量:', Object.keys(window.__SJ_FIELD_MAPPINGS__).length);
+                
+                // 测试特定字段
+                const testFields = ['firstName', 'email', 'phone', 'wechat', 'testField'];
+                testFields.forEach(field => {
+                    if (window.__SJ_FIELD_MAPPINGS__[field]) {
+                        console.log(`✅ ${field} 字段映射存在:`, window.__SJ_FIELD_MAPPINGS__[field]);
+                    } else {
+                        console.warn(`⚠️ ${field} 字段映射缺失`);
+                    }
+                });
+            } else {
+                updateStatus('mappingStatus', 'error', '❌ 字段映射未加载');
+                console.error('❌ window.__SJ_FIELD_MAPPINGS__ 未找到');
+            }
+        }
+
+        // 测试握手协议
+        function testHandshake() {
+            console.log('🔍 开始测试握手协议...');
+            
+            if (typeof chrome !== 'undefined' && chrome.runtime) {
+                // 测试获取用户档案
+                chrome.runtime.sendMessage({type: 'GET_SJ_PROFILE'}, (response) => {
+                    if (chrome.runtime.lastError) {
+                        console.error('❌ 握手协议失败:', chrome.runtime.lastError);
+                    } else {
+                        console.log('✅ 握手协议响应 (GET_SJ_PROFILE):', response);
+                    }
+                });
+                
+                // 测试获取投递记录
+                chrome.runtime.sendMessage({type: 'GET_SJ_APPLICATIONS'}, (response) => {
+                    if (chrome.runtime.lastError) {
+                        console.error('❌ 获取投递记录失败:', chrome.runtime.lastError);
+                    } else {
+                        console.log('✅ 投递记录响应 (GET_SJ_APPLICATIONS):', response);
+                    }
+                });
+            } else {
+                console.error('❌ Chrome 扩展 API 不可用，无法测试握手协议');
+            }
+        }
+
+        // 测试统一键位存储
+        function testStorage() {
+            console.log('🔍 开始测试统一键位存储...');
+            
+            if (typeof chrome !== 'undefined' && chrome.storage) {
+                chrome.storage.local.get(['sj_profile', 'sj_applications'], (result) => {
+                    console.log('✅ 统一键位数据:', result);
+                    
+                    if (result.sj_profile) {
+                        console.log('✅ sj_profile 数据存在:', result.sj_profile);
+                    } else {
+                        console.log('ℹ️ sj_profile 数据为空或不存在');
+                    }
+                    
+                    if (result.sj_applications) {
+                        console.log('✅ sj_applications 数据存在:', result.sj_applications);
+                    } else {
+                        console.log('ℹ️ sj_applications 数据为空或不存在');
+                    }
+                });
+            } else {
+                console.error('❌ Chrome 存储 API 不可用');
+            }
+        }
+
+        // 检测浮窗
+        function checkWidget() {
+            const widget = document.getElementById('sj-autofill-tutor');
+            if (widget) {
+                updateStatus('widgetStatus', 'ok', '✅ 浮窗已显示');
+                console.log('✅ AutoFill Pro 浮窗已找到:', widget);
+            } else {
+                updateStatus('widgetStatus', 'pending', '⏳ 浮窗未检测到');
+                console.log('⏳ AutoFill Pro 浮窗未找到，可能还在加载中...');
+            }
+        }
+
+        // 页面加载完成后开始检测
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 AutoFill Pro 测试页面已加载');
+            
+            // 延迟检测，给扩展时间加载
+            setTimeout(() => {
+                testExtensionStatus();
+                testFieldMapping();
+                checkWidget();
+            }, 1000);
+            
+            // 定期检查浮窗状态
+            setInterval(checkWidget, 2000);
+        });
+
+        // 监听来自扩展的消息
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+            chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+                console.log('📨 收到扩展消息:', message);
+                
+                if (message.type === 'FORMS_DETECTED') {
+                    updateStatus('formStatus', 'ok', `✅ 检测到 ${message.count} 个表单`);
+                } else if (message.type === 'FORM_FILLED') {
+                    console.log('✅ 表单填充完成:', message);
+                }
+                
+                sendResponse({status: 'received'});
+            });
+        }
+    </script>
+</body>
+</html>

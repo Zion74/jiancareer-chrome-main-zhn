@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFill Pro 扩展测试页面</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .test-section h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .instructions {
+            background-color: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 AutoFill Pro 扩展功能测试</h1>
+        
+        <div class="instructions">
+            <h3>📋 测试说明</h3>
+            <p>1. 请先在 Chrome 浏览器中加载 AutoFill Pro 扩展（开发者模式）</p>
+            <p>2. 扩展目录：<code>C:\Users\willi\Desktop\2025\塔塔\Simplify\dist</code></p>
+            <p>3. 加载后应该能看到页面右下角的浮窗</p>
+            <p>4. 点击浮窗中的"检测表单"和"一键填写"按钮进行测试</p>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 基本信息表单测试</h3>
+            <form id="basicForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">姓:</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="请输入姓">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">名:</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="请输入名">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">邮箱:</label>
+                    <input type="email" id="email" name="email" placeholder="请输入邮箱地址">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">手机号:</label>
+                    <input type="tel" id="phone" name="phone" placeholder="请输入手机号">
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">所在城市:</label>
+                    <input type="text" id="location" name="location" placeholder="请输入所在城市">
+                </div>
+                
+                <!-- 测试字段：验证热改功能 -->
+                <div class="form-group">
+                    <label for="testField">测试字段:</label>
+                    <input type="text" id="testField" name="testField" placeholder="测试字段">
+                </div>
+                
+                <button type="submit">提交基本信息</button>
+            </form>
+        </div>
+
+        <div class="test-section">
+            <h3>💼 求职信息表单测试</h3>
+            <form id="jobForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="wechat">微信号:</label>
+                        <input type="text" id="wechat" name="wechat" placeholder="请输入微信号">
+                    </div>
+                    <div class="form-group">
+                        <label for="qq">QQ号:</label>
+                        <input type="text" id="qq" name="qq" placeholder="请输入QQ号">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="linkedin">LinkedIn:</label>
+                        <input type="text" id="linkedin" name="linkedin" placeholder="LinkedIn 个人资料链接">
+                    </div>
+                    <div class="form-group">
+                        <label for="github">GitHub:</label>
+                        <input type="text" id="github" name="github" placeholder="GitHub 个人主页">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="portfolio">个人作品集:</label>
+                    <input type="text" id="portfolio" name="portfolio" placeholder="个人网站或作品集链接">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="expectedSalary">期望薪资:</label>
+                        <input type="text" id="expectedSalary" name="expectedSalary" placeholder="期望薪资范围">
+                    </div>
+                    <div class="form-group">
+                        <label for="expectedPosition">期望职位:</label>
+                        <input type="text" id="expectedPosition" name="expectedPosition" placeholder="期望职位">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="selfIntroduction">自我介绍:</label>
+                    <textarea id="selfIntroduction" name="selfIntroduction" placeholder="请简单介绍一下自己"></textarea>
+                </div>
+                
+                <button type="submit">提交求职信息</button>
+            </form>
+        </div>
+
+        <div class="test-section">
+            <h3>🎓 教育背景表单测试</h3>
+            <form id="educationForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="school">毕业院校:</label>
+                        <input type="text" id="school" name="school" placeholder="请输入毕业院校">
+                    </div>
+                    <div class="form-group">
+                        <label for="major">专业:</label>
+                        <input type="text" id="major" name="major" placeholder="请输入专业">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="degree">学位:</label>
+                        <select id="degree" name="degree">
+                            <option value="">请选择学位</option>
+                            <option value="bachelor">学士</option>
+                            <option value="master">硕士</option>
+                            <option value="doctor">博士</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gpa">GPA:</label>
+                        <input type="text" id="gpa" name="gpa" placeholder="请输入GPA">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="graduation">毕业时间:</label>
+                        <input type="date" id="graduation" name="graduation">
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday">出生日期:</label>
+                        <input type="date" id="birthday" name="birthday">
+                    </div>
+                </div>
+                
+                <button type="submit">提交教育信息</button>
+            </form>
+        </div>
+
+        <div id="testResults" class="test-section">
+            <h3>📊 测试结果</h3>
+            <div id="statusContainer">
+                <p>等待扩展加载...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 测试脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusContainer = document.getElementById('statusContainer');
+            
+            // 检查扩展是否加载
+            function checkExtensionStatus() {
+                if (window.__SJ_FIELD_MAPPINGS__) {
+                    showStatus('✅ 字段映射文件已加载', 'success');
+                    showStatus(`📋 检测到 ${Object.keys(window.__SJ_FIELD_MAPPINGS__).length} 个字段类型`, 'success');
+                    
+                    // 检查测试字段是否存在
+                    if (window.__SJ_FIELD_MAPPINGS__.testField) {
+                        showStatus('🔥 热改功能验证成功：检测到测试字段', 'success');
+                    }
+                } else {
+                    showStatus('❌ 字段映射文件未加载，请检查扩展是否正确安装', 'error');
+                }
+                
+                // 检查浮窗是否存在
+                setTimeout(() => {
+                    const tutorWidget = document.getElementById('sj-autofill-tutor');
+                    if (tutorWidget) {
+                        showStatus('✅ 浮窗组件已加载', 'success');
+                    } else {
+                        showStatus('❌ 浮窗组件未找到，请检查扩展', 'error');
+                    }
+                }, 2000);
+            }
+            
+            function showStatus(message, type) {
+                const statusDiv = document.createElement('div');
+                statusDiv.className = `status ${type}`;
+                statusDiv.textContent = message;
+                statusContainer.appendChild(statusDiv);
+            }
+            
+            // 延迟检查，等待扩展加载
+            setTimeout(checkExtensionStatus, 1000);
+            
+            // 表单提交事件监听
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    showStatus(`📝 表单 ${form.id} 提交事件触发`, 'success');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
