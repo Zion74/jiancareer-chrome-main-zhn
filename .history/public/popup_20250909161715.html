@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JianCareer AutoFill</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 200px;
+      height: 350px;
+      font-family: 'Inter', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', SimHei, Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .popup-container {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      box-shadow: 0px 4px 20px 0px #00000040;
+      background: #ffffff;
+      padding: 20px;
+      width: 200px;
+      height: 350px;
+      row-gap: 20px;
+    }
+
+    /* 通用顶部栏样式 */
+    .header {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      justify-content: space-between;
+    }
+    
+    .logo {
+      flex-shrink: 0;
+      width: 59px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .logo img {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .logo span {
+      font-size: 12px;
+      color: #303030;
+      font-weight: 500;
+    }
+    
+    .header-controls {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: flex-end;
+      column-gap: 10px;
+    }
+    
+    .control-icon {
+      flex-shrink: 0;
+      width: 12px;
+      height: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      color: #666;
+    }
+    
+    .control-icon:hover {
+      color: #00b0c2;
+    }
+    
+    /* 主内容区域样式 */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      justify-content: center;
+      row-gap: 15px;
+    }
+    
+    /* 用户状态区域 */
+    .user-status {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      justify-content: space-between;
+      padding-right: 53px;
+      padding-left: 53px;
+      min-width: 160px;
+      height: 16px;
+    }
+    
+    .user-avatar {
+      width: 16px;
+      height: 16px;
+      overflow: hidden;
+      border-radius: 50%;
+      background: #00b0c2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 10px;
+    }
+    
+    .username {
+      width: 32px;
+      height: 11px;
+      letter-spacing: 0;
+      color: #303030;
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      font-weight: 300;
+    }
+    
+    /* 功能卡片样式 */
+    .feature-card {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      border-radius: 10px;
+      background: #00b0c2;
+      padding: 15px 20px;
+      overflow: hidden;
+      row-gap: 15px;
+    }
+    
+    .card-logo {
+      flex-shrink: 0;
+      width: 87px;
+      height: 24px;
+    }
+    
+    .card-subtitle {
+      flex-shrink: 0;
+      width: 104px;
+      height: 26px;
+      text-align: center;
+      letter-spacing: 0;
+      color: #ffffff;
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 10px;
+    }
+    
+    /* 按钮样式 */
+    .btn-primary {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      justify-content: center;
+      column-gap: 8px;
+      border-radius: 10px;
+      background: #ffea04;
+      padding: 5px 40px;
+      border: none;
+      cursor: pointer;
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      color: #303030;
+      line-height: 15px;
+    }
+    
+    .btn-secondary {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      justify-content: center;
+      column-gap: 8px;
+      border-radius: 10px;
+      background: #ffffff;
+      padding: 5px 40px;
+      border: none;
+      cursor: pointer;
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      color: #303030;
+      line-height: 15px;
+    }
+    
+    /* 表单样式 */
+    .form-group {
+      display: inline-flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: flex-start;
+      align-self: stretch;
+      margin-right: -9px;
+      margin-left: -9px;
+      row-gap: 5px;
+    }
+    
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: flex-start;
+      align-self: stretch;
+      border-radius: 10px;
+      box-shadow: 1px 1px 2px 0px #00000040;
+      background: #f7f8fa;
+      padding: 5px 10px;
+      row-gap: 2px;
+    }
+    
+    .form-label {
+      flex-shrink: 0;
+      align-self: stretch;
+      letter-spacing: 0;
+      color: #a9a9a9;
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      font-weight: 300;
+    }
+    
+    .form-input {
+      flex-shrink: 0;
+      align-self: stretch;
+      line-height: 12px;
+      letter-spacing: 0;
+      color: #303030;
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      font-weight: 300;
+      border: none;
+      background: transparent;
+      outline: none;
+    }
+    
+    /* 底部栏样式 */
+    .footer {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      justify-content: center;
+      column-gap: 5px;
+      margin-right: 59px;
+      margin-left: 59px;
+    }
+    
+    .feedback-icon {
+      flex-shrink: 0;
+      width: 6px;
+      height: 6px;
+      overflow: hidden;
+    }
+    
+    .feedback-text {
+      flex-shrink: 0;
+      line-height: 10px;
+      letter-spacing: 0;
+      color: #00b0c2;
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 8px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    
+    /* 状态提示样式 */
+    .status-message {
+      flex-shrink: 0;
+      line-height: 15px;
+      letter-spacing: 0;
+      color: #303030;
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* 加载状态样式保留用于动画 */
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #00bcd4;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 成功状态样式由外部CSS处理 */
+
+    /* 错误状态样式由外部CSS处理 */
+
+    /* 退出登录样式由外部CSS处理 */
+
+    /* 通用样式由外部CSS处理 */
+
+    /* 确保hidden类优先级正确 */
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="popup-container">
+    <div class="header">
+      <div class="logo">
+        <img src="icons/icon-16.svg" alt="JianCareer" width="16" height="16">
+        <span>简职</span>
+      </div>
+      <div class="header-controls">
+        <div class="control-icon" title="设置">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 1v6m0 10v6m11-7h-6m-10 0H1m15.5-6.5L19 4.5m-14 14L7.5 16M16.5 7.5L19 4.5m-14 14L7.5 16"></path>
+          </svg>
+        </div>
+        <div class="control-icon" title="帮助">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <point cx="12" cy="17" r="1"></point>
+          </svg>
+        </div>
+        <div class="control-icon" title="关闭">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 状态 1: 登录前初始页面 -->
+    <div id="state-1" class="main-content">
+      <div class="user-status">
+        <div class="user-avatar">👤</div>
+        <span class="username">请登录</span>
+      </div>
+      
+      <div class="feature-card">
+        <div class="card-logo">
+          <img src="icons/icon-48.png" alt="简职" style="width: 87px; height: 24px;">
+        </div>
+        <div class="card-subtitle">
+          简职涯<br>
+          可开启您的一键求职
+        </div>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; align-self: stretch; row-gap: 8px;">
+          <div class="status-message">登录</div>
+          <button id="login-btn" class="btn-primary">登录</button>
+          <button id="register-btn" class="btn-secondary">注册</button>
+          <button id="website-btn" class="btn-secondary">前往官网</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 状态 2: 登录界面 -->
+    <div id="state-2" class="main-content hidden">
+      <div class="user-status">
+        <div class="user-avatar">👤</div>
+        <span class="username">请登录</span>
+      </div>
+      
+      <div class="feature-card">
+        <div class="card-logo">
+          <img src="icons/icon-48.png" alt="简职" style="width: 87px; height: 24px;">
+        </div>
+        <div class="card-subtitle">
+          简职涯<br>
+          可开启您的一键求职
+        </div>
+        
+        <div class="form-group">
+          <div class="form-field">
+            <div class="form-label">请输入用户名</div>
+            <input type="text" id="username" class="form-input" placeholder="请输入用户名">
+          </div>
+          <div class="form-field">
+            <div class="form-label">请输入密码</div>
+            <input type="password" id="password" class="form-input" placeholder="请输入密码">
+          </div>
+        </div>
+        
+        <button id="submit-login-btn" class="btn-primary">登录</button>
+      </div>
+    </div>
+
+    <!-- 状态 3: 登录后主界面 -->
+    <div id="state-3" class="main-content hidden">
+      <div class="user-status">
+        <div class="user-avatar">👤</div>
+        <span id="username-display" class="username">user6687331s</span>
+      </div>
+      
+      <div class="feature-card">
+        <div class="card-logo">
+          <img src="icons/icon-48.png" alt="简职" style="width: 87px; height: 24px;">
+        </div>
+        <div class="card-subtitle">
+          点击按钮<br>
+          一键填入简历资料
+        </div>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; align-self: stretch; row-gap: 8px;">
+          <div style="display: flex; align-items: center; align-self: stretch; justify-content: space-between; padding: 5px 10px; background: #f7f8fa; border-radius: 10px;">
+            <span style="font-size: 10px; color: #303030;">简历版本 A - 求职简历</span>
+            <span style="font-size: 10px; color: #666;">▼</span>
+          </div>
+          <button id="autofill-btn" class="btn-primary">一键填入</button>
+          <button id="profile-btn" class="btn-secondary">修改/查看资料</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 状态 4: 填写状态中 -->
+    <div id="state-4" class="main-content hidden">
+      <div class="user-status">
+        <div class="user-avatar">👤</div>
+        <span id="username-display-4" class="username">user6687331s</span>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; align-items: center; align-self: stretch; padding: 15px 20px; background: #e8f5e8; border-radius: 10px; row-gap: 10px;">
+        <div class="status-message" style="color: #2e7d32;">自动填写中</div>
+        <div class="loading-spinner"></div>
+        <div style="font-size: 10px; color: #2e7d32; text-align: center;">正在为您填入简历资料！</div>
+      </div>
+      
+      <div class="feature-card">
+        <div class="card-logo">
+          <img src="icons/icon-48.png" alt="简职" style="width: 87px; height: 24px;">
+        </div>
+        <div class="card-subtitle">
+          点击按钮<br>
+          一键填入简历资料
+        </div>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; align-self: stretch; row-gap: 8px;">
+          <div style="display: flex; align-items: center; align-self: stretch; justify-content: space-between; padding: 5px 10px; background: #f7f8fa; border-radius: 10px;">
+            <span style="font-size: 10px; color: #303030;">简历版本 A - 求职简历</span>
+            <span style="font-size: 10px; color: #666;">▼</span>
+          </div>
+          <button class="btn-primary" disabled style="opacity: 0.6;">一键填入</button>
+          <button id="profile-btn-4" class="btn-secondary">修改/查看资料</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 状态 5: 填写成功 -->
+    <div id="state-5" class="main-content hidden">
+      <div class="user-status">
+        <div class="user-avatar">👤</div>
+        <span id="username-display-5" class="username">user6687331s</span>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; align-items: center; align-self: stretch; padding: 15px 20px; background: #e8f5e8; border-radius: 10px; row-gap: 10px;">
+        <div class="status-message" style="color: #2e7d32;">填写完成</div>
+        <div style="font-size: 10px; color: #2e7d32; text-align: center;">恭喜您已完成简历填入！</div>
+      </div>
+      
+      <div class="feature-card">
+        <div class="card-logo">
+          <img src="icons/icon-48.png" alt="简职" style="width: 87px; height: 24px;">
+        </div>
+        <div class="card-subtitle">
+          点击按钮<br>
+          一键填入简历资料
+        </div>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; align-self: stretch; row-gap: 8px;">
+          <div style="display: flex; align-items: center; align-self: stretch; justify-content: space-between; padding: 5px 10px; background: #f7f8fa; border-radius: 10px;">
+            <span style="font-size: 10px; color: #303030;">简历版本 A - 求职简历</span>
+            <span style="font-size: 10px; color: #666;">▼</span>
+          </div>
+          <button id="continue-btn" class="btn-primary">一键填入</button>
+          <button id="profile-btn-5" class="btn-secondary">修改/查看资料</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 状态 6: 部分缺失 -->
+    <div id="state-6" class="main-content hidden">
+      <div class="user-status">
+        <div class="user-avatar">👤</div>
+        <span id="username-display-6" class="username">user6687331s</span>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; align-items: center; align-self: stretch; padding: 15px 20px; background: #fff3cd; border-radius: 10px; row-gap: 10px;">
+        <div class="status-message" style="color: #856404;">填写完成</div>
+        <div style="font-size: 10px; color: #856404; text-align: center;">部分信息缺失，请检查简历！</div>
+      </div>
+      
+      <div class="feature-card">
+        <div class="card-logo">
+          <img src="icons/icon-48.png" alt="简职" style="width: 87px; height: 24px;">
+        </div>
+        <div class="card-subtitle">
+          点击按钮<br>
+          一键填入简历资料
+        </div>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; align-self: stretch; row-gap: 8px;">
+          <div style="display: flex; align-items: center; align-self: stretch; justify-content: space-between; padding: 5px 10px; background: #f7f8fa; border-radius: 10px;">
+            <span style="font-size: 10px; color: #303030;">简历版本 A - 求职简历</span>
+            <span style="font-size: 10px; color: #666;">▼</span>
+          </div>
+          <button id="retry-btn" class="btn-primary">一键填入</button>
+          <button id="profile-btn-6" class="btn-secondary">修改/查看资料</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 状态 7: 填写失败 -->
+    <div id="state-7" class="main-content hidden">
+      <div class="user-status">
+        <div class="user-avatar">👤</div>
+        <span id="username-display-7" class="username">user6687331s</span>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; align-items: center; align-self: stretch; padding: 15px 20px; background: #f8d7da; border-radius: 10px; row-gap: 10px;">
+        <div class="status-message" style="color: #721c24;">填写失败</div>
+        <div style="font-size: 10px; color: #721c24; text-align: center;">请检查网络或简历！</div>
+      </div>
+      
+      <div class="feature-card">
+        <div class="card-logo">
+          <img src="icons/icon-48.png" alt="简职" style="width: 87px; height: 24px;">
+        </div>
+        <div class="card-subtitle">
+          点击按钮<br>
+          一键填入简历资料
+        </div>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; align-self: stretch; row-gap: 8px;">
+          <div style="display: flex; align-items: center; align-self: stretch; justify-content: space-between; padding: 5px 10px; background: #f7f8fa; border-radius: 10px;">
+            <span style="font-size: 10px; color: #303030;">简历版本 A - 求职简历</span>
+            <span style="font-size: 10px; color: #666;">▼</span>
+          </div>
+          <button id="retry-fill-btn" class="btn-primary">一键填入</button>
+          <button id="profile-btn-7" class="btn-secondary">修改/查看资料</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="feedback-icon">
+        <svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <point cx="12" cy="17" r="1"></point>
+        </svg>
+      </div>
+      <a href="#" class="feedback-text">意见反馈</a>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

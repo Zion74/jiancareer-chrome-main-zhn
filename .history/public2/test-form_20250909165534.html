@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模拟招聘表单 - 简历自动填写测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group.full-width {
+            flex: 100%;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #EF4444;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #6366F1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item,
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="radio"],
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #6366F1;
+        }
+
+        .submit-section {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 2px solid #E5E7EB;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            color: white;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .test-info {
+            background: #F0F9FF;
+            border: 1px solid #0EA5E9;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 30px;
+        }
+
+        .test-info h3 {
+            color: #0369A1;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .test-info p {
+            color: #0284C7;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .auto-fill-hint {
+            background: #F0FDF4;
+            border: 1px solid #10B981;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .auto-fill-hint h4 {
+            color: #059669;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .auto-fill-hint p {
+            color: #047857;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 招聘申请表</h1>
+            <p>请填写以下信息完成求职申请</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="test-info">
+                <h3>📋 测试说明</h3>
+                <p>这是一个模拟的招聘表单页面，用于测试简历自动填写功能。请先在插件中填写简历信息，然后点击"一键填写"按钮或页面右上角的浮动按钮进行测试。</p>
+            </div>
+            
+            <div class="auto-fill-hint">
+                <h4>💡 使用提示</h4>
+                <p>点击浏览器右上角的插件图标，然后点击"一键填写"按钮，或者点击页面右上角的"🚀 一键填写简历"按钮</p>
+            </div>
+
+            <form id="jobApplicationForm">
+                <!-- 基本信息 -->
+                <div class="form-section">
+                    <h2 class="section-title">基本信息</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">姓名 <span class="required">*</span></label>
+                            <input type="text" id="fullName" name="fullName" placeholder="请输入真实姓名" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">性别</label>
+                            <select id="gender" name="gender">
+                                <option value="">请选择</option>
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">手机号 <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" placeholder="请输入手机号" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">邮箱 <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="请输入邮箱地址" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="birthDate">出生日期</label>
+                            <input type="date" id="birthDate" name="birthDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="currentCity">现居住地</label>
+                            <input type="text" id="currentCity" name="currentCity" placeholder="请输入现居住城市">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 教育背景 -->
+                <div class="form-section">
+                    <h2 class="section-title">教育背景</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="education">最高学历</label>
+                            <select id="education" name="education">
+                                <option value="">请选择学历</option>
+                                <option value="高中">高中</option>
+                                <option value="大专">大专</option>
+                                <option value="本科">本科</option>
+                                <option value="硕士">硕士</option>
+                                <option value="博士">博士</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="school">毕业院校</label>
+                            <input type="text" id="school" name="school" placeholder="请输入毕业院校">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="major">专业</label>
+                            <input type="text" id="major" name="major" placeholder="请输入专业名称">
+                        </div>
+                        <div class="form-group">
+                            <label for="graduationDate">毕业时间</label>
+                            <input type="date" id="graduationDate" name="graduationDate">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 工作经验 -->
+                <div class="form-section">
+                    <h2 class="section-title">工作经验</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="workYears">工作年限</label>
+                            <select id="workYears" name="workYears">
+                                <option value="">请选择工作年限</option>
+                                <option value="应届毕业生">应届毕业生</option>
+                                <option value="1年以下">1年以下</option>
+                                <option value="1-3年">1-3年</option>
+                                <option value="3-5年">3-5年</option>
+                                <option value="5-10年">5-10年</option>
+                                <option value="10年以上">10年以上</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="currentCompany">当前公司</label>
+                            <input type="text" id="currentCompany" name="currentCompany" placeholder="请输入当前公司名称">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="currentPosition">当前职位</label>
+                            <input type="text" id="currentPosition" name="currentPosition" placeholder="请输入当前职位">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 求职意向 -->
+                <div class="form-section">
+                    <h2 class="section-title">求职意向</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expectedPosition">期望职位</label>
+                            <input type="text" id="expectedPosition" name="expectedPosition" placeholder="请输入期望职位">
+                        </div>
+                        <div class="form-group">
+                            <label for="expectedSalary">期望薪资</label>
+                            <select id="expectedSalary" name="expectedSalary">
+                                <option value="">请选择期望薪资</option>
+                                <option value="3K-5K">3K-5K</option>
+                                <option value="5K-8K">5K-8K</option>
+                                <option value="8K-12K">8K-12K</option>
+                                <option value="12K-20K">12K-20K</option>
+                                <option value="20K-30K">20K-30K</option>
+                                <option value="30K以上">30K以上</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="expectedCity">期望工作地点</label>
+                            <input type="text" id="expectedCity" name="expectedCity" placeholder="请输入期望工作城市">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 技能特长 -->
+                <div class="form-section">
+                    <h2 class="section-title">技能特长</h2>
+                    
+                    <div class="form-group">
+                        <label>技能标签</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="skill1" name="skills" value="JavaScript">
+                                <label for="skill1">JavaScript</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="skill2" name="skills" value="Python">
+                                <label for="skill2">Python</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="skill3" name="skills" value="Java">
+                                <label for="skill3">Java</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="skill4" name="skills" value="React">
+                                <label for="skill4">React</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="skill5" name="skills" value="Vue">
+                                <label for="skill5">Vue</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 自我介绍 -->
+                <div class="form-section">
+                    <h2 class="section-title">自我介绍</h2>
+                    
+                    <div class="form-group">
+                        <label for="selfIntroduction">个人简介</label>
+                        <textarea id="selfIntroduction" name="selfIntroduction" placeholder="请简要介绍您的个人经历、技能特长和职业规划..."></textarea>
+                    </div>
+                </div>
+
+                <!-- 提交按钮 -->
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn">提交申请</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 表单提交处理
+        document.getElementById('jobApplicationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 收集表单数据
+            const formData = new FormData(this);
+            const data = {};
+            
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    // 处理多选值
+                    if (Array.isArray(data[key])) {
+                        data[key].push(value);
+                    } else {
+                        data[key] = [data[key], value];
+                    }
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // 显示提交结果
+            showSubmitResult(data);
+        });
+        
+        function showSubmitResult(data) {
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 10000;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 30px;
+                        border-radius: 12px;
+                        max-width: 500px;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                    ">
+                        <h3 style="color: #10B981; margin-bottom: 20px; text-align: center;">✅ 提交成功！</h3>
+                        <p style="margin-bottom: 20px; color: #6B7280;">以下是您提交的信息：</p>
+                        <div style="background: #F9FAFB; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                            <pre style="white-space: pre-wrap; font-size: 12px; color: #374151;">${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                        <div style="text-align: center;">
+                            <button onclick="this.closest('div').parentElement.remove()" style="
+                                background: #6366F1;
+                                color: white;
+                                padding: 10px 20px;
+                                border: none;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                font-weight: 500;
+                            ">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        // 页面加载完成后的提示
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const notification = document.createElement('div');
+                notification.innerHTML = `
+                    <div style="
+                        position: fixed;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: #10B981;
+                        color: white;
+                        padding: 16px 24px;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                        z-index: 9999;
+                        font-weight: 500;
+                        animation: slideDown 0.3s ease-out;
+                    ">
+                        🎉 测试页面加载完成！请使用插件进行自动填写测试
+                    </div>
+                `;
+                
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes slideDown {
+                        from {
+                            transform: translateX(-50%) translateY(-100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(-50%) translateY(0);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+                document.body.appendChild(notification);
+                
+                // 5秒后自动移除
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 5000);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>模拟招聘表单 - MVP</title>
+</head>
+<body>
+  <h2>模拟中石油/美团网申表单</h2>
+  <form id="apply-form">
+    <div>
+      <label for="name">姓名：</label>
+      <input type="text" id="name" name="name" />
+    </div>
+    <div>
+      <label for="phone">手机号：</label>
+      <input type="text" id="phone" name="phone" />
+    </div>
+    <div>
+      <label for="email">邮箱：</label>
+      <input type="email" id="email" name="email" />
+    </div>
+    <div>
+      <label for="school">毕业院校：</label>
+      <input type="text" id="school" name="school" />
+    </div>
+    <div>
+      <label for="major">专业：</label>
+      <input type="text" id="major" name="major" />
+    </div>
+    <button type="button" onclick="alert('假装提交')">提交</button>
+  </form>
+
+  <script>
+    // 模拟监听输入（测试插件是否触发事件）
+    document.querySelectorAll('input').forEach(el => {
+      el.addEventListener('input', (e) => {
+        console.log(e.target.id + ' changed to: ' + e.target.value);
+      });
+    });
+  </script>
+</body>
+</html>

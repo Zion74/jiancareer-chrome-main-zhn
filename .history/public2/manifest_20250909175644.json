@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "OnceResume MVP",
+  "version": "1.0",
+  "description": "一键填写模拟招聘表单",
+  "icons": {
+    "32": "icon-16.svg"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "32": "icon-32.png"
+    }
+  },
+  "permissions": ["activeTab", "scripting"],
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:3000/public2/mock-form.html"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": ["http://localhost:3000/public2/mock-form.html"],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

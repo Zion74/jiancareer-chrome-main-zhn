@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一键填入功能测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .test-section h3 {
+            color: #555;
+            margin-top: 0;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .form-section {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>一键填入功能测试页面</h1>
+        
+        <div class="test-section">
+            <h3>🔧 环境检测</h3>
+            <button onclick="checkEnvironment()">检测环境</button>
+            <button onclick="checkContentScript()">检测Content Script</button>
+            <button onclick="testMessageCommunication()">测试消息通信</button>
+            <div id="env-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 模拟数据测试</h3>
+            <button onclick="setTestData()">设置测试数据</button>
+            <button onclick="clearTestData()">清除数据</button>
+            <button onclick="showCurrentData()">显示当前数据</button>
+            <div id="data-status"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 自动填写测试</h3>
+            <button onclick="testAutofill()">测试自动填写</button>
+            <button onclick="clearForm()">清空表单</button>
+            <div id="autofill-status"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>📋 测试表单</h3>
+            <form id="test-form">
+                <div class="form-group">
+                    <label for="name">姓名:</label>
+                    <input type="text" id="name" name="name" placeholder="请输入姓名">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">电话:</label>
+                    <input type="tel" id="phone" name="phone" placeholder="请输入电话号码">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">邮箱:</label>
+                    <input type="email" id="email" name="email" placeholder="请输入邮箱地址">
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience">工作经验:</label>
+                    <select id="experience" name="experience">
+                        <option value="">请选择工作经验</option>
+                        <option value="0-1年">0-1年</option>
+                        <option value="1-3年">1-3年</option>
+                        <option value="3-5年">3-5年</option>
+                        <option value="5-10年">5-10年</option>
+                        <option value="10年以上">10年以上</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="education">学历:</label>
+                    <select id="education" name="education">
+                        <option value="">请选择学历</option>
+                        <option value="高中">高中</option>
+                        <option value="大专">大专</option>
+                        <option value="本科">本科</option>
+                        <option value="硕士">硕士</option>
+                        <option value="博士">博士</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="salary">期望薪资:</label>
+                    <input type="text" id="salary" name="salary" placeholder="请输入期望薪资">
+                </div>
+                
+                <div class="form-group">
+                    <label for="skills">技能:</label>
+                    <textarea id="skills" name="skills" placeholder="请输入您的技能"></textarea>
+                </div>
+            </form>
+        </div>
+
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        let logElement = document.getElementById('log');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#f00' : type === 'success' ? '#0f0' : type === 'warning' ? '#ff0' : '#0ff';
+            logElement.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function showStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        // 环境检测
+        function checkEnvironment() {
+            log('开始环境检测...');
+            
+            // 检测Chrome扩展API
+            if (typeof chrome !== 'undefined' && chrome.runtime) {
+                log('✓ Chrome扩展API可用', 'success');
+                showStatus('env-status', 'Chrome扩展环境正常', 'success');
+            } else {
+                log('✗ Chrome扩展API不可用', 'error');
+                showStatus('env-status', 'Chrome扩展环境异常', 'error');
+            }
+            
+            // 检测页面URL
+            log(`当前页面: ${window.location.href}`);
+            
+            // 检测表单元素
+            const form = document.getElementById('test-form');
+            if (form) {
+                const inputs = form.querySelectorAll('input, select, textarea');
+                log(`✓ 检测到 ${inputs.length} 个表单字段`, 'success');
+            }
+        }
+        
+        // 检测Content Script
+        function checkContentScript() {
+            log('检测Content Script注入状态...');
+            
+            // 检查是否有JianCareerContentScript
+            if (window.jianCareerContentScript) {
+                log('✓ Content Script已注入', 'success');
+                showStatus('env-status', 'Content Script正常', 'success');
+            } else {
+                log('✗ Content Script未注入', 'error');
+                showStatus('env-status', 'Content Script未注入', 'error');
+            }
+        }
+        
+        // 测试消息通信
+        function testMessageCommunication() {
+            log('测试消息通信...');
+            
+            // 发送测试消息
+            window.postMessage({
+                type: 'JC_TEST_MESSAGE',
+                source: 'test-page',
+                data: { test: true }
+            }, '*');
+            
+            log('已发送测试消息');
+        }
+        
+        // 设置测试数据
+        function setTestData() {
+            const testData = {
+                name: '张三',
+                phone: '13800138000',
+                email: 'zhangsan@example.com',
+                experience: '3-5年',
+                education: '本科',
+                salary: '10-15K',
+                skills: 'JavaScript, React, Node.js, Python'
+            };
+            
+            // 保存到localStorage
+            localStorage.setItem('test-profile-data', JSON.stringify(testData));
+            
+            log('测试数据已设置:', 'success');
+            log(JSON.stringify(testData, null, 2));
+            showStatus('data-status', '测试数据已设置', 'success');
+        }
+        
+        // 清除测试数据
+        function clearTestData() {
+            localStorage.removeItem('test-profile-data');
+            log('测试数据已清除', 'success');
+            showStatus('data-status', '测试数据已清除', 'success');
+        }
+        
+        // 显示当前数据
+        function showCurrentData() {
+            const data = localStorage.getItem('test-profile-data');
+            if (data) {
+                log('当前数据:');
+                log(data);
+                showStatus('data-status', '数据已显示在日志中', 'info');
+            } else {
+                log('没有找到数据', 'warning');
+                showStatus('data-status', '没有数据', 'warning');
+            }
+        }
+        
+        // 测试自动填写
+        function testAutofill() {
+            log('开始测试自动填写...');
+            
+            const testData = localStorage.getItem('test-profile-data');
+            if (!testData) {
+                log('请先设置测试数据', 'error');
+                showStatus('autofill-status', '请先设置测试数据', 'error');
+                return;
+            }
+            
+            const data = JSON.parse(testData);
+            
+            // 模拟自动填写
+            try {
+                document.getElementById('name').value = data.name || '';
+                document.getElementById('phone').value = data.phone || '';
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('experience').value = data.experience || '';
+                document.getElementById('education').value = data.education || '';
+                document.getElementById('salary').value = data.salary || '';
+                document.getElementById('skills').value = data.skills || '';
+                
+                log('表单填写完成', 'success');
+                showStatus('autofill-status', '自动填写成功', 'success');
+            } catch (error) {
+                log('填写失败: ' + error.message, 'error');
+                showStatus('autofill-status', '自动填写失败', 'error');
+            }
+        }
+        
+        // 清空表单
+        function clearForm() {
+            const form = document.getElementById('test-form');
+            form.reset();
+            log('表单已清空', 'success');
+            showStatus('autofill-status', '表单已清空', 'info');
+        }
+        
+        // 监听消息
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type) {
+                log(`收到消息: ${event.data.type}`);
+                log(JSON.stringify(event.data, null, 2));
+            }
+        });
+        
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            log('测试页面加载完成', 'success');
+            log('请按顺序执行测试步骤:');
+            log('1. 检测环境');
+            log('2. 设置测试数据');
+            log('3. 测试自动填写');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "name": "JianCareer AutoFill - 智能自动填表助手",
+  "short_name": "JianCareer AutoFill",
+  "version": "1.0.0",
+  "description": "智能自动填表Chrome扩展，支持求职申请、注册表单等场景的一键填写，提高填表效率80%以上。",
+  "author": "JianCareer Team",
+  "minimum_chrome_version": "109",
+  
+  "icons": {
+    "icon": "icons/icon.svg",
+  },
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "JianCareer AutoFill",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
+  
+  "permissions": [
+    "activeTab",
+    "storage",
+    "unlimitedStorage",
+    "tabs",
+    "webNavigation",
+    "contextMenus",
+    "alarms"
+  ],
+  
+  "host_permissions": [
+    "*://*/*"
+  ],
+  
+  "options_page": "options.html",
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*", "icons/*"],
+      "matches": ["*://*/*"]
+    }
+  ],
+  
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data: https:;"
+  }
+}

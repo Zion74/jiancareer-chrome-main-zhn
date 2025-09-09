@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JianCareer AutoFill</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 320px;
+        height: 480px;
+      }
+
+      .popup-container {
+        width: 320px;
+        height: 480px;
+        padding: 20px;
+      }
+
+      /* 保留必要的组件特定样式 */
+
+      /* 状态区域样式由外部CSS处理 */
+
+      /* 主内容区域样式由外部CSS处理 */
+
+      /* 按钮样式由外部CSS处理 */
+
+      /* 输入框样式由外部CSS处理 */
+
+      /* 用户信息样式由外部CSS处理 */
+
+      /* 简历选择器和页脚样式由外部CSS处理 */
+
+      /* 加载状态样式保留用于动画 */
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #00bcd4;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* 成功状态样式由外部CSS处理 */
+
+      /* 错误状态样式由外部CSS处理 */
+
+      /* 退出登录样式由外部CSS处理 */
+
+      /* 通用样式由外部CSS处理 */
+
+      /* 确保hidden类优先级正确 */
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="popup-container">
+      <div class="header">
+        <div class="logo">
+          <img
+            src="icons/icon-16.svg"
+            alt="JianCareer"
+            width="16"
+            height="16"
+          />
+          <span>简职</span>
+        </div>
+        <div class="header-controls">
+          <div class="control-icon" title="设置">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M12 1v6m0 10v6m11-7h-6m-10 0H1m15.5-6.5L19 4.5m-14 14L7.5 16M16.5 7.5L19 4.5m-14 14L7.5 16"
+              ></path>
+            </svg>
+          </div>
+          <div class="control-icon" title="帮助">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <point cx="12" cy="17" r="1"></point>
+            </svg>
+          </div>
+          <div class="control-icon" title="关闭">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 状态显示区域 -->
+      <div id="status-section" class="status-section">
+        <span id="status-text">请登录</span>
+      </div>
+
+      <!-- 状态 1: 未登录首页 -->
+      <div id="state-1" class="state-content">
+        <div class="welcome-section">
+          <h2>欢迎使用简职</h2>
+          <p>一键填写求职信息，让求职更简单</p>
+        </div>
+
+        <div class="button-group">
+          <button id="edit-resume-btn" class="btn btn-primary">编辑简历</button>
+          <button id="autofill-direct-btn" class="btn btn-secondary">一键填写</button>
+          <button id="login-btn" class="btn btn-link">登录(占位)</button>
+        </div>
+      </div>
+
+      <!-- 状态 2: 简历编辑页 -->
+      <div id="state-2" class="state-content hidden">
+        <div class="resume-edit-section">
+          <button id="back-to-main-btn" class="back-btn">← 返回</button>
+          <h3>编辑简历信息</h3>
+
+          <form id="resume-form" class="resume-form">
+            <div class="input-group">
+              <label class="input-label">姓名</label>
+              <input
+                type="text"
+                id="resume-name"
+                class="form-input"
+                placeholder="请输入姓名"
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label">手机号</label>
+              <input
+                type="tel"
+                id="resume-phone"
+                class="form-input"
+                placeholder="请输入手机号"
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label">邮箱</label>
+              <input
+                type="email"
+                id="resume-email"
+                class="form-input"
+                placeholder="请输入邮箱地址"
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label">学历</label>
+              <select id="resume-education" class="form-select">
+                <option value="">请选择学历</option>
+                <option value="高中">高中</option>
+                <option value="大专">大专</option>
+                <option value="本科">本科</option>
+                <option value="硕士">硕士</option>
+                <option value="博士">博士</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label">工作经验</label>
+              <textarea
+                id="resume-experience"
+                class="form-textarea"
+                placeholder="请输入工作经验"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label">技能特长</label>
+              <textarea
+                id="resume-skills"
+                class="form-textarea"
+                placeholder="请输入技能特长"
+                rows="2"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              id="save-resume-btn"
+              class="btn btn-primary btn-full"
+            >
+              保存简历
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 状态 3: 登录输入页 -->
+      <div id="state-3" class="state-content hidden">
+        <div class="login-section">
+          <button id="back-btn" class="back-btn">← 返回</button>
+          <h3>登录账户</h3>
+
+          <form id="login-form" class="login-form">
+            <div class="input-group">
+              <label class="input-label">手机号/邮箱</label>
+              <input
+                type="text"
+                id="username"
+                class="form-input"
+                placeholder="请输入手机号或邮箱"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label">密码</label>
+              <input
+                type="password"
+                id="password"
+                class="form-input"
+                placeholder="请输入密码"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              id="submit-login-btn"
+              class="btn btn-primary btn-full"
+            >
+              登录
+            </button>
+          </form>
+
+          <div class="login-footer">
+            <a href="#" class="link-text">忘记密码？</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 状态 4: 已登录主页 -->
+      <div id="state-4" class="state-content hidden">
+        <div class="user-section">
+          <div class="user-info">
+            <div class="user-avatar">👤</div>
+            <span id="username-display" class="username">user6687331s</span>
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-selector">
+            <label class="input-label">选择简历版本</label>
+            <select id="resume-selector" class="form-select">
+              <option value="resume-a">简历版本 A - 求职简历</option>
+              <option value="resume-b">简历版本 B - 实习简历</option>
+              <option value="resume-c">简历版本 C - 项目简历</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="action-section">
+          <button id="autofill-btn" class="btn btn-primary btn-full">
+            一键填入
+          </button>
+          <button id="profile-btn" class="btn btn-secondary btn-full">
+            修改/查看资料
+          </button>
+        </div>
+      </div>
+
+      <!-- 状态 4: 自动填写中 -->
+      <div id="state-4" class="state-content hidden">
+        <div class="user-section">
+          <div class="user-info">
+            <div class="user-avatar">👤</div>
+            <span id="username-display-4" class="username">user6687331s</span>
+          </div>
+        </div>
+
+        <div class="loading-section">
+          <div class="loading-animation">
+            <div class="spinner"></div>
+          </div>
+          <h3>正在一键填写...</h3>
+          <p id="progress-text" class="progress-text">正在分析表单...</p>
+
+          <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+
+          <p id="resume-version-text" class="resume-version">
+            使用：简历版本 A
+          </p>
+        </div>
+      </div>
+
+      <!-- 状态 5: 一键填入成功 -->
+      <div id="state-5" class="state-content" style="display: none">
+        <div class="success-message">
+          <div class="success-icon">✅</div>
+          <div class="success-text">已自动填写成功</div>
+          <div class="success-subtitle">简历信息已成功填入表单</div>
+        </div>
+        <div class="success-stats">
+          <!-- 动态填充成功统计信息 -->
+        </div>
+        <div class="resume-info">
+          <span class="resume-label">使用简历：</span>
+          <span class="resume-name">简历A - 求职版本</span>
+        </div>
+        <div class="button-group">
+          <button id="close-success-btn" class="btn btn-secondary btn-full">
+            关闭
+          </button>
+        </div>
+      </div>
+
+      <!-- 状态 6: 一键填入失败 -->
+      <div id="state-6" class="state-content" style="display: none">
+        <div class="error-container">
+          <div class="error-icon">❌</div>
+          <div class="error-message">填写失败，请重试</div>
+          <div class="error-detail">请检查表单或修改资料后重试</div>
+        </div>
+        <div class="resume-info">
+          <span class="resume-label">使用简历：</span>
+          <span class="resume-name">简历A - 求职版本</span>
+        </div>
+        <div class="button-group">
+          <button id="retry-autofill-btn" class="btn btn-primary btn-full">
+            重试
+          </button>
+          <button
+            id="edit-profile-btn"
+            class="btn btn-secondary btn-full"
+            style="display: none"
+          >
+            修改资料
+          </button>
+          <button id="close-error-btn" class="btn btn-secondary btn-full">
+            关闭
+          </button>
+        </div>
+      </div>
+
+      <!-- 状态 7: 退出登录 -->
+      <div id="state-7" class="state-content" style="display: none">
+        <div class="logout-container">
+          <div class="logout-icon">👋</div>
+          <div class="logout-title">您已退出登录</div>
+          <div class="logout-message">您已成功退出登录，感谢使用简职涯！</div>
+          <div class="logout-subtitle">2秒后将自动返回首页</div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="feedback-icon">
+          <svg
+            width="6"
+            height="6"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <point cx="12" cy="17" r="1"></point>
+          </svg>
+        </div>
+        <a href="#" class="feedback-text">意见反馈</a>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

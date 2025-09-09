@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JianCareer AutoFill</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 320px;
+        height: 480px;
+      }
+
+      .popup-container {
+        width: 320px;
+        height: 480px;
+        padding: 20px;
+      }
+
+      /* 保留必要的组件特定样式 */
+
+      /* 状态区域样式由外部CSS处理 */
+
+      /* 主内容区域样式由外部CSS处理 */
+
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        align-self: stretch;
+        justify-content: center;
+        row-gap: 8px;
+      }
+
+      .btn {
+        display: flex;
+        align-items: center;
+        align-self: stretch;
+        justify-content: center;
+        column-gap: 8px;
+        border-radius: 10px;
+        padding: 5px 40px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+          SimHei, Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        line-height: 15px;
+        letter-spacing: 0;
+        color: #303030;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-primary {
+        background: #ffea04;
+        color: #303030;
+      }
+
+      .btn-secondary {
+        background: #ffffff;
+        color: #303030;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn:disabled:hover {
+        transform: none;
+        box-shadow: none;
+      }
+
+      .input-group {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: stretch;
+        margin-right: -9px;
+        margin-left: -9px;
+        row-gap: 5px;
+      }
+
+      .input-field {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: stretch;
+        border-radius: 10px;
+        box-shadow: 1px 1px 2px 0px #00000040;
+        background: #f7f8fa;
+        padding: 5px 10px;
+        row-gap: 2px;
+      }
+
+      .input-label {
+        align-self: stretch;
+        letter-spacing: 0;
+        color: #a9a9a9;
+        font-size: 10px;
+        font-weight: 300;
+      }
+
+      .input-placeholder {
+        align-self: stretch;
+        line-height: 12px;
+        letter-spacing: 0;
+        color: #303030;
+        font-size: 10px;
+        font-weight: 300;
+        border: none;
+        background: transparent;
+        outline: none;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        align-self: stretch;
+        padding-right: 1px;
+        padding-left: 1px;
+      }
+
+      .username {
+        margin: 0px 0px 0px 6px;
+        width: 72px;
+        height: 9px;
+        letter-spacing: 0;
+        color: #303030;
+        font-size: 10px;
+        font-weight: 300;
+      }
+
+      .user-menu {
+        margin-left: 53px;
+        width: 13px;
+        height: 13px;
+        cursor: pointer;
+      }
+
+      .resume-selector {
+        display: flex;
+        align-items: center;
+        align-self: stretch;
+        justify-content: space-between;
+        background: #f9f9f9;
+        padding: 2px 9px 2px 12px;
+        min-width: 120px;
+        height: 21px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .resume-text {
+        display: flex;
+        align-items: center;
+        width: 79px;
+        height: 17px;
+        letter-spacing: 0;
+        color: #303030;
+        font-size: 10px;
+      }
+
+      .dropdown-arrow {
+        width: 10px;
+        height: 4px;
+      }
+
+      .footer {
+        display: inline-flex;
+        align-items: center;
+        align-self: stretch;
+        justify-content: flex-end;
+        column-gap: 5px;
+        margin-right: 59px;
+        margin-left: 59px;
+      }
+
+      .feedback-icon {
+        width: 6px;
+        height: 6px;
+      }
+
+      .feedback-text {
+        line-height: 10px;
+        letter-spacing: 0;
+        color: #00b0c2;
+        font-size: 8px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .feedback-text:hover {
+        text-decoration: underline;
+      }
+
+      /* 状态 4: 自动填写中样式 */
+      .loading-section {
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      .loading-animation {
+        margin-bottom: 16px;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #00bcd4;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .progress-text {
+        color: #666;
+        font-size: 14px;
+        margin: 8px 0;
+      }
+
+      .progress-bar-container {
+        width: 100%;
+        height: 6px;
+        background-color: #f0f0f0;
+        border-radius: 3px;
+        margin: 12px 0;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background-color: #00bcd4;
+        border-radius: 3px;
+        transition: width 0.3s ease;
+        width: 0%;
+      }
+
+      .resume-version {
+        color: #888;
+        font-size: 12px;
+        margin-top: 8px;
+      }
+
+      /* 状态 5: 填写成功样式 */
+      .success-section {
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      .success-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+
+      .success-message {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #e8f5e8 0%, #f0f9f0 100%);
+        border-radius: 12px;
+        margin-bottom: 16px;
+        border: 1px solid #c3e6c3;
+      }
+
+      .success-text {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2d5a2d;
+        margin-bottom: 8px;
+      }
+
+      .success-subtitle {
+        font-size: 14px;
+        color: #5a7a5a;
+      }
+
+      .success-stats {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 16px;
+        text-align: center;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .success-stats div:first-child {
+        font-weight: 600;
+        color: #28a745;
+      }
+
+      /* 状态 6: 填写失败样式 */
+      .error-section {
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      .error-container {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #ffeaea 0%, #fff5f5 100%);
+        border-radius: 12px;
+        margin-bottom: 16px;
+        border: 1px solid #f5c6c6;
+      }
+
+      .error-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+      }
+
+      .error-message {
+        font-size: 18px;
+        font-weight: 600;
+        color: #d32f2f;
+        margin-bottom: 8px;
+      }
+
+      .error-detail {
+        font-size: 14px;
+        color: #7a4a4a;
+        line-height: 1.4;
+      }
+
+      .error-actions {
+        margin-top: 16px;
+      }
+
+      .error-actions .btn {
+        margin-bottom: 8px;
+      }
+
+      /* 状态 7: 退出登录样式 */
+      .logout-container {
+        text-align: center;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #f0f4ff 0%, #f8faff 100%);
+        border-radius: 12px;
+        margin: 20px 0;
+        border: 1px solid #d1e7ff;
+      }
+
+      .logout-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+
+      .logout-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1976d2;
+        margin-bottom: 12px;
+      }
+
+      .logout-message {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 8px;
+        line-height: 1.4;
+      }
+
+      .logout-subtitle {
+        font-size: 12px;
+        color: #666;
+        font-style: italic;
+      }
+
+      /* 通用样式 */
+      .state-content {
+        padding: 16px;
+      }
+
+      .user-section {
+        margin-bottom: 20px;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .user-avatar {
+        font-size: 20px;
+      }
+
+      .username {
+        font-weight: 500;
+        color: #333;
+      }
+
+      .welcome-section {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .welcome-section h2 {
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 18px;
+      }
+
+      .welcome-section p {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .login-section {
+        padding: 0;
+      }
+
+      .back-btn {
+        background: none;
+        border: none;
+        color: #00bcd4;
+        font-size: 14px;
+        cursor: pointer;
+        margin-bottom: 16px;
+        padding: 4px 0;
+      }
+
+      .back-btn:hover {
+        color: #0097a7;
+      }
+
+      .login-form {
+        margin-bottom: 16px;
+      }
+
+      .input-group {
+        margin-bottom: 16px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #00bcd4;
+      }
+
+      .form-select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: white;
+        box-sizing: border-box;
+      }
+
+      .login-footer {
+        text-align: center;
+      }
+
+      .link-text {
+        color: #00bcd4;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .link-text:hover {
+        text-decoration: underline;
+      }
+
+      .resume-section {
+        margin-bottom: 20px;
+      }
+
+      .action-section {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .btn-full {
+        width: 100%;
+      }
+
+      .btn-link {
+        background: none;
+        color: #00bcd4;
+        border: 1px solid #00bcd4;
+      }
+
+      .btn-link:hover {
+        background-color: #00bcd4;
+        color: white;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="popup-container">
+      <div class="header">
+        <div class="logo">
+          <img
+            src="icons/icon-16.svg"
+            alt="JianCareer"
+            width="16"
+            height="16"
+          />
+          <span>简职</span>
+        </div>
+        <div class="header-controls">
+          <div class="control-icon" title="设置">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M12 1v6m0 10v6m11-7h-6m-10 0H1m15.5-6.5L19 4.5m-14 14L7.5 16M16.5 7.5L19 4.5m-14 14L7.5 16"
+              ></path>
+            </svg>
+          </div>
+          <div class="control-icon" title="帮助">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <point cx="12" cy="17" r="1"></point>
+            </svg>
+          </div>
+          <div class="control-icon" title="关闭">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 状态显示区域 -->
+      <div id="status-section" class="status-section">
+        <span id="status-text">请登录</span>
+      </div>
+
+      <!-- 状态 1: 未登录首页 -->
+      <div id="state-1" class="state-content">
+        <div class="welcome-section">
+          <h2>欢迎使用简职</h2>
+          <p>一键填写求职信息，让求职更简单</p>
+        </div>
+
+        <div class="button-group">
+          <button id="login-btn" class="btn btn-primary">登录</button>
+          <button id="register-btn" class="btn btn-secondary">注册</button>
+          <button id="website-btn" class="btn btn-link">访问官网</button>
+        </div>
+      </div>
+
+      <!-- 状态 2: 登录输入页 -->
+      <div id="state-2" class="state-content hidden">
+        <div class="login-section">
+          <button id="back-btn" class="back-btn">← 返回</button>
+          <h3>登录账户</h3>
+
+          <form id="login-form" class="login-form">
+            <div class="input-group">
+              <label class="input-label">手机号/邮箱</label>
+              <input
+                type="text"
+                id="username"
+                class="form-input"
+                placeholder="请输入手机号或邮箱"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label">密码</label>
+              <input
+                type="password"
+                id="password"
+                class="form-input"
+                placeholder="请输入密码"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              id="submit-login-btn"
+              class="btn btn-primary btn-full"
+            >
+              登录
+            </button>
+          </form>
+
+          <div class="login-footer">
+            <a href="#" class="link-text">忘记密码？</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 状态 3: 已登录主页 -->
+      <div id="state-3" class="state-content hidden">
+        <div class="user-section">
+          <div class="user-info">
+            <div class="user-avatar">👤</div>
+            <span id="username-display" class="username">user6687331s</span>
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-selector">
+            <label class="input-label">选择简历版本</label>
+            <select id="resume-selector" class="form-select">
+              <option value="resume-a">简历版本 A - 求职简历</option>
+              <option value="resume-b">简历版本 B - 实习简历</option>
+              <option value="resume-c">简历版本 C - 项目简历</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="action-section">
+          <button id="autofill-btn" class="btn btn-primary btn-full">
+            一键填入
+          </button>
+          <button id="profile-btn" class="btn btn-secondary btn-full">
+            修改/查看资料
+          </button>
+        </div>
+      </div>
+
+      <!-- 状态 4: 自动填写中 -->
+      <div id="state-4" class="state-content hidden">
+        <div class="user-section">
+          <div class="user-info">
+            <div class="user-avatar">👤</div>
+            <span id="username-display-4" class="username">user6687331s</span>
+          </div>
+        </div>
+
+        <div class="loading-section">
+          <div class="loading-animation">
+            <div class="spinner"></div>
+          </div>
+          <h3>正在一键填写...</h3>
+          <p id="progress-text" class="progress-text">正在分析表单...</p>
+
+          <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+
+          <p id="resume-version-text" class="resume-version">
+            使用：简历版本 A
+          </p>
+        </div>
+      </div>
+
+      <!-- 状态 5: 一键填入成功 -->
+      <div id="state-5" class="state-content" style="display: none">
+        <div class="success-message">
+          <div class="success-icon">✅</div>
+          <div class="success-text">已自动填写成功</div>
+          <div class="success-subtitle">简历信息已成功填入表单</div>
+        </div>
+        <div class="success-stats">
+          <!-- 动态填充成功统计信息 -->
+        </div>
+        <div class="resume-info">
+          <span class="resume-label">使用简历：</span>
+          <span class="resume-name">简历A - 求职版本</span>
+        </div>
+        <div class="button-group">
+          <button id="close-success-btn" class="btn btn-secondary btn-full">
+            关闭
+          </button>
+        </div>
+      </div>
+
+      <!-- 状态 6: 一键填入失败 -->
+      <div id="state-6" class="state-content" style="display: none">
+        <div class="error-container">
+          <div class="error-icon">❌</div>
+          <div class="error-message">填写失败，请重试</div>
+          <div class="error-detail">请检查表单或修改资料后重试</div>
+        </div>
+        <div class="resume-info">
+          <span class="resume-label">使用简历：</span>
+          <span class="resume-name">简历A - 求职版本</span>
+        </div>
+        <div class="button-group">
+          <button id="retry-autofill-btn" class="btn btn-primary btn-full">
+            重试
+          </button>
+          <button
+            id="edit-profile-btn"
+            class="btn btn-secondary btn-full"
+            style="display: none"
+          >
+            修改资料
+          </button>
+          <button id="close-error-btn" class="btn btn-secondary btn-full">
+            关闭
+          </button>
+        </div>
+      </div>
+
+      <!-- 状态 7: 退出登录 -->
+      <div id="state-7" class="state-content" style="display: none">
+        <div class="logout-container">
+          <div class="logout-icon">👋</div>
+          <div class="logout-title">您已退出登录</div>
+          <div class="logout-message">您已成功退出登录，感谢使用简职涯！</div>
+          <div class="logout-subtitle">2秒后将自动返回首页</div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="feedback-icon">
+          <svg
+            width="6"
+            height="6"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <point cx="12" cy="17" r="1"></point>
+          </svg>
+        </div>
+        <a href="#" class="feedback-text">意见反馈</a>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

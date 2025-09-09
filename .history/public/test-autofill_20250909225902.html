@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动填写功能测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 自动填写功能测试</h1>
+        
+        <div class="test-section">
+            <h3>测试控制</h3>
+            <button class="btn btn-success" onclick="testAutofill()">🎯 测试自动填写</button>
+            <button class="btn" onclick="clearForm()">🧹 清空表单</button>
+            <div id="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试表单</h3>
+            <form id="test-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">姓名</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="请输入姓名">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">手机号码</label>
+                        <input type="tel" id="phone" name="phone" placeholder="请输入手机号码">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">邮箱地址</label>
+                        <input type="email" id="email" name="email" placeholder="请输入邮箱地址">
+                    </div>
+                    <div class="form-group">
+                        <label for="location">所在城市</label>
+                        <input type="text" id="location" name="location" placeholder="请输入所在城市">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="wechat">微信号</label>
+                        <input type="text" id="wechat" name="wechat" placeholder="请输入微信号">
+                    </div>
+                    <div class="form-group">
+                        <label for="github">GitHub</label>
+                        <input type="text" id="github" name="github" placeholder="请输入GitHub地址">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="university">毕业院校</label>
+                        <input type="text" id="university" name="university" placeholder="请输入毕业院校">
+                    </div>
+                    <div class="form-group">
+                        <label for="major">专业</label>
+                        <input type="text" id="major" name="major" placeholder="请输入专业">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="graduationTime">毕业时间</label>
+                        <input type="text" id="graduationTime" name="graduationTime" placeholder="请输入毕业时间">
+                    </div>
+                    <div class="form-group">
+                        <label for="gpa">GPA</label>
+                        <input type="text" id="gpa" name="gpa" placeholder="请输入GPA">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="experience">工作经验</label>
+                        <select id="experience" name="experience">
+                            <option value="">请选择工作经验</option>
+                            <option value="0-1">0-1年</option>
+                            <option value="1-3">1-3年</option>
+                            <option value="3-5">3-5年</option>
+                            <option value="5-10">5-10年</option>
+                            <option value="10+">10年以上</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="education">学历水平</label>
+                        <select id="education" name="education">
+                            <option value="">请选择学历</option>
+                            <option value="高中">高中</option>
+                            <option value="大专">大专</option>
+                            <option value="本科">本科</option>
+                            <option value="硕士">硕士</option>
+                            <option value="博士">博士</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="salary">期望薪资</label>
+                    <select id="salary" name="salary">
+                        <option value="">请选择期望薪资</option>
+                        <option value="5k-8k">5K-8K</option>
+                        <option value="8k-12k">8K-12K</option>
+                        <option value="12k-18k">12K-18K</option>
+                        <option value="18k-25k">18K-25K</option>
+                        <option value="25k+">25K以上</option>
+                        <option value="100w">100w</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="skills">专业技能</label>
+                    <textarea id="skills" name="skills" placeholder="请描述您的专业技能"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="introduction">个人简介</label>
+                    <textarea id="introduction" name="introduction" placeholder="请简要介绍您的工作经历和个人优势"></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 默认用户数据
+        const defaultProfileData = {
+            firstName: '宝',
+            lastName: '矿力',
+            name: '宝矿力',
+            email: 'baokuangli@outlook.com',
+            phone: '13344556677',
+            phoneNumber: '13344556677',
+            wechat: 'bkl',
+            wechatId: 'bkl',
+            location: '浙江杭州',
+            city: '浙江杭州',
+            github: 'baokuangli@outlook.com',
+            githubUrl: 'baokuangli@outlook.com',
+            university: '浙江大学',
+            school: '浙江大学',
+            major: '摆烂',
+            specialty: '摆烂',
+            graduationTime: '2024年6月',
+            graduationDate: '2024年6月',
+            gpa: '5.0',
+            salary: '100w',
+            expectedSalary: '100w',
+            introduction: '我是宝矿力',
+            resumeText: '我是宝矿力',
+            summary: '我是宝矿力'
+        };
+        
+        // 字段映射配置（模拟content.js中的逻辑）
+        const fieldMappings = {
+            mock: {
+                name: 'input[name="firstName"], input[id="firstName"], input[name="name"], input[id="name"], input[placeholder*="姓名"]',
+                firstName: 'input[name="firstName"], input[id="firstName"], input[placeholder*="姓名"]',
+                lastName: 'input[name="lastName"], input[id="lastName"], input[placeholder*="姓氏"]',
+                phone: 'input[name="phone"], input[id="phone"], input[type="tel"], input[placeholder*="手机"]',
+                email: 'input[name="email"], input[id="email"], input[type="email"], input[placeholder*="邮箱"]',
+                experience: 'select[name="experience"], select[id="experience"]',
+                education: 'select[name="education"], select[id="education"]',
+                salary: 'select[name="salary"], select[id="salary"]',
+                location: 'input[name="location"], input[id="location"], input[placeholder*="城市"]',
+                skills: 'textarea[name="skills"], textarea[id="skills"], textarea[placeholder*="技能"]',
+                resume: 'textarea[name="introduction"], textarea[id="introduction"], textarea[name="resume"], textarea[id="resume"], textarea[placeholder*="简历"], textarea[placeholder*="个人简介"]',
+                introduction: 'textarea[name="introduction"], textarea[id="introduction"], textarea[placeholder*="个人简介"]',
+                wechat: 'input[name="wechat"], input[id="wechat"], input[placeholder*="微信"]',
+                github: 'input[name="github"], input[id="github"], input[placeholder*="GitHub"]',
+                university: 'input[name="university"], input[id="university"], input[placeholder*="院校"]',
+                major: 'input[name="major"], input[id="major"], input[placeholder*="专业"]',
+                graduationTime: 'input[name="graduationTime"], input[id="graduationTime"], input[placeholder*="毕业时间"]',
+                gpa: 'input[name="gpa"], input[id="gpa"], input[placeholder*="GPA"]'
+            }
+        };
+        
+        // 获取字段值（模拟content.js中的getFieldValue方法）
+        function getFieldValue(fieldType, profileData) {
+            const mapping = {
+                name: profileData.name || profileData.fullName || profileData.firstName,
+                firstName: profileData.firstName || profileData.name,
+                lastName: profileData.lastName || profileData.surname,
+                phone: profileData.phone || profileData.mobile || profileData.phoneNumber,
+                email: profileData.email,
+                experience: profileData.workExperience || profileData.experience,
+                education: profileData.education || profileData.degree,
+                salary: profileData.salary || profileData.expectedSalary,
+                location: profileData.location || profileData.city,
+                skills: profileData.skills || profileData.specialties,
+                resume: profileData.resumeText || profileData.summary || profileData.introduction,
+                introduction: profileData.introduction || profileData.resumeText || profileData.summary,
+                wechat: profileData.wechat || profileData.wechatId,
+                github: profileData.github || profileData.githubUrl,
+                university: profileData.university || profileData.school,
+                major: profileData.major || profileData.specialty,
+                graduationTime: profileData.graduationTime || profileData.graduationDate,
+                gpa: profileData.gpa
+            };
+            
+            return mapping[fieldType] || '';
+        }
+        
+        // 填写字段（模拟content.js中的fillField方法）
+        function fillField(element, value) {
+            if (!element || !value) return false;
+            
+            try {
+                if (element.tagName === 'SELECT') {
+                    // 处理下拉选择框
+                    const options = Array.from(element.options);
+                    const matchedOption = options.find(option => 
+                        option.value === value || 
+                        option.textContent.includes(value) ||
+                        value.includes(option.value)
+                    );
+                    
+                    if (matchedOption) {
+                        element.value = matchedOption.value;
+                        element.dispatchEvent(new Event('change', { bubbles: true }));
+                        return true;
+                    }
+                } else if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    // 处理输入框和文本域
+                    element.value = value;
+                    element.dispatchEvent(new Event('input', { bubbles: true }));
+                    element.dispatchEvent(new Event('change', { bubbles: true }));
+                    return true;
+                }
+            } catch (error) {
+                console.error('填写字段时出错:', error);
+            }
+            
+            return false;
+        }
+        
+        // 测试自动填写功能
+        function testAutofill() {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = '<div style="padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; margin-top: 10px;">🔄 正在测试自动填写...</div>';
+            
+            let totalFields = 0;
+            let filledFields = 0;
+            const results = [];
+            
+            // 遍历所有字段映射
+            for (const [fieldType, selector] of Object.entries(fieldMappings.mock)) {
+                const elements = document.querySelectorAll(selector);
+                const value = getFieldValue(fieldType, defaultProfileData);
+                
+                if (elements.length > 0 && value) {
+                    totalFields++;
+                    const element = elements[0]; // 使用第一个匹配的元素
+                    const success = fillField(element, value);
+                    
+                    if (success) {
+                        filledFields++;
+                        results.push(`✅ ${fieldType}: "${value}"`);
+                        // 添加视觉效果
+                        element.style.backgroundColor = '#d4edda';
+                        setTimeout(() => {
+                            element.style.backgroundColor = '';
+                        }, 2000);
+                    } else {
+                        results.push(`❌ ${fieldType}: 填写失败`);
+                    }
+                } else if (value) {
+                    results.push(`⚠️ ${fieldType}: 未找到对应字段 (${selector})`);
+                }
+            }
+            
+            // 显示结果
+            setTimeout(() => {
+                const success = filledFields > 0;
+                const resultClass = success ? 'success' : 'error';
+                const resultIcon = success ? '🎉' : '❌';
+                
+                resultDiv.innerHTML = `
+                    <div class="result ${resultClass}">
+                        <h4>${resultIcon} 测试结果</h4>
+                        <p><strong>成功填写:</strong> ${filledFields}/${totalFields} 个字段</p>
+                        <details>
+                            <summary>详细结果</summary>
+                            <pre>${results.join('\n')}</pre>
+                        </details>
+                    </div>
+                `;
+                
+                console.log('自动填写测试完成:', {
+                    totalFields,
+                    filledFields,
+                    success: filledFields > 0,
+                    results
+                });
+            }, 500);
+        }
+        
+        // 清空表单
+        function clearForm() {
+            const form = document.getElementById('test-form');
+            form.reset();
+            
+            // 清空结果显示
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = '<div style="padding: 10px; background: #e2e3e5; border: 1px solid #d6d8db; border-radius: 4px; margin-top: 10px;">✨ 表单已清空</div>';
+            
+            setTimeout(() => {
+                resultDiv.innerHTML = '';
+            }, 2000);
+        }
+        
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            console.log('测试页面加载完成');
+            console.log('默认数据:', defaultProfileData);
+        });
+    </script>
+</body>
+</html>

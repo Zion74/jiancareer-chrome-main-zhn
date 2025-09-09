@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>简历自动填写助手</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup-container">
+      <div class="header">
+        <h1>简历自动填写助手</h1>
+        <div class="status-indicator" id="statusIndicator">
+          <span class="status-dot"></span>
+          <span class="status-text">就绪</span>
+        </div>
+      </div>
+
+      <!-- 主界面 -->
+      <div class="main-content" id="mainContent">
+        <div class="resume-status">
+          <div class="resume-info" id="resumeInfo">
+            <p class="no-resume">暂无简历信息</p>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="editResumeBtn">
+            <span class="btn-icon">✏️</span>
+            编辑简历
+          </button>
+          <button class="btn btn-success" id="autoFillBtn" disabled>
+            <span class="btn-icon">🚀</span>
+            一键填写
+          </button>
+        </div>
+
+        <div class="quick-actions">
+          <button class="btn btn-secondary btn-small" id="testFormBtn">
+            <span class="btn-icon">🧪</span>
+            测试表单
+          </button>
+          <button class="btn btn-secondary btn-small" id="clearDataBtn">
+            <span class="btn-icon">🗑️</span>
+            清空数据
+          </button>
+        </div>
+      </div>
+
+      <!-- 简历编辑界面 -->
+      <div class="resume-editor hidden" id="resumeEditor">
+        <div class="editor-header">
+          <button class="btn-back" id="backBtn">← 返回</button>
+          <h2>编辑简历信息</h2>
+        </div>
+
+        <form class="resume-form" id="resumeForm">
+          <div class="form-group">
+            <label for="fullName">姓名 *</label>
+            <input type="text" id="fullName" name="fullName" required />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">手机号 *</label>
+            <input type="tel" id="phone" name="phone" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">邮箱 *</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="gender">性别</label>
+            <select id="gender" name="gender">
+              <option value="">请选择</option>
+              <option value="男">男</option>
+              <option value="女">女</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="education">学历</label>
+            <select id="education" name="education">
+              <option value="">请选择</option>
+              <option value="高中">高中</option>
+              <option value="大专">大专</option>
+              <option value="本科">本科</option>
+              <option value="硕士">硕士</option>
+              <option value="博士">博士</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="university">毕业院校</label>
+            <input type="text" id="university" name="university" />
+          </div>
+
+          <div class="form-group">
+            <label for="major">专业</label>
+            <input type="text" id="major" name="major" />
+          </div>
+
+          <div class="form-group">
+            <label for="workYears">工作年限</label>
+            <select id="workYears" name="workYears">
+              <option value="">请选择</option>
+              <option value="应届毕业生">应届毕业生</option>
+              <option value="1年以下">1年以下</option>
+              <option value="1-3年">1-3年</option>
+              <option value="3-5年">3-5年</option>
+              <option value="5-10年">5-10年</option>
+              <option value="10年以上">10年以上</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="currentCompany">当前公司</label>
+            <input type="text" id="currentCompany" name="currentCompany" />
+          </div>
+
+          <div class="form-group">
+            <label for="currentPosition">当前职位</label>
+            <input type="text" id="currentPosition" name="currentPosition" />
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelBtn">
+              取消
+            </button>
+            <button type="submit" class="btn btn-primary">保存简历</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- 消息提示 -->
+      <div class="message hidden" id="message">
+        <span class="message-text"></span>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

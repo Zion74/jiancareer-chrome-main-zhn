@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一键填入功能调试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .debug-title {
+            color: #2c5aa0;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #2c5aa0;
+            padding-bottom: 5px;
+        }
+        .debug-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #2c5aa0;
+        }
+        .success { border-left-color: #28a745; background: #d4edda; }
+        .error { border-left-color: #dc3545; background: #f8d7da; }
+        .warning { border-left-color: #ffc107; background: #fff3cd; }
+        .btn {
+            background: #2c5aa0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { background: #1e3d6f; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .log-container {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 一键填入功能调试页面</h1>
+    
+    <div class="debug-container">
+        <h2 class="debug-title">环境检测</h2>
+        <div id="environment-check"></div>
+        <button class="btn" onclick="checkEnvironment()">重新检测环境</button>
+    </div>
+    
+    <div class="debug-container">
+        <h2 class="debug-title">页面字段检测</h2>
+        <div id="field-check"></div>
+        <button class="btn" onclick="checkFields()">检测页面字段</button>
+    </div>
+    
+    <div class="debug-container">
+        <h2 class="debug-title">模拟数据测试</h2>
+        <div id="data-test"></div>
+        <button class="btn" onclick="testWithMockData()">使用模拟数据测试</button>
+        <button class="btn" onclick="clearAllFields()">清空所有字段</button>
+    </div>
+    
+    <div class="debug-container">
+        <h2 class="debug-title">消息通信测试</h2>
+        <div id="message-test"></div>
+        <button class="btn" onclick="testMessageCommunication()">测试消息通信</button>
+    </div>
+    
+    <div class="debug-container">
+        <h2 class="debug-title">实时日志</h2>
+        <div id="log-container" class="log-container"></div>
+        <button class="btn" onclick="clearLogs()">清空日志</button>
+    </div>
+
+    <script>
+        // 日志系统
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logContainer = document.getElementById('log-container');
+            const colors = {
+                info: '#0f0',
+                error: '#f00',
+                warning: '#ff0',
+                success: '#0f0'
+            };
+            
+            const logEntry = document.createElement('div');
+            logEntry.style.color = colors[type] || '#0f0';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function clearLogs() {
+            document.getElementById('log-container').innerHTML = '';
+        }
+        
+        // 环境检测
+        function checkEnvironment() {
+            const container = document.getElementById('environment-check');
+            container.innerHTML = '';
+            
+            const checks = [
+                {
+                    name: 'Chrome对象',
+                    test: () => typeof chrome !== 'undefined',
+                    result: typeof chrome !== 'undefined'
+                },
+                {
+                    name: 'Chrome.tabs API',
+                    test: () => typeof chrome !== 'undefined' && chrome.tabs,
+                    result: typeof chrome !== 'undefined' && chrome.tabs
+                },
+                {
+                    name: 'Chrome.runtime API',
+                    test: () => typeof chrome !== 'undefined' && chrome.runtime,
+                    result: typeof chrome !== 'undefined' && chrome.runtime
+                },
+                {
+                    name: '当前URL',
+                    test: () => window.location.href,
+                    result: window.location.href
+                },
+                {
+                    name: '页面标题',
+                    test: () => document.title,
+                    result: document.title
+                }
+            ];
+            
+            checks.forEach(check => {
+                const div = document.createElement('div');
+                div.className = `debug-item ${check.result ? 'success' : 'error'}`;
+                div.innerHTML = `<strong>${check.name}:</strong> ${check.result || '❌ 未检测到'}`;
+                container.appendChild(div);
+                
+                log(`环境检测 - ${check.name}: ${check.result || '失败'}`, check.result ? 'success' : 'error');
+            });
+        }
+        
+        // 字段检测
+        function checkFields() {
+            const container = document.getElementById('field-check');
+            container.innerHTML = '';
+            
+            // 模拟content.js中的字段映射
+            const fieldMappings = {
+                name: 'input[name="firstName"], input[id="firstName"], input[name="name"], input[id="name"], input[placeholder*="姓名"]',
+                phone: 'input[name="phone"], input[id="phone"], input[type="tel"], input[placeholder*="手机"]',
+                email: 'input[name="email"], input[id="email"], input[type="email"], input[placeholder*="邮箱"]',
+                experience: 'select[name="experience"], select[id="experience"]',
+                education: 'select[name="education"], select[id="education"]',
+                salary: 'select[name="salary"], select[id="salary"]',
+                resume: 'textarea[name="introduction"], textarea[id="introduction"], textarea[name="resume"], textarea[id="resume"], textarea[placeholder*="简历"], textarea[placeholder*="个人简介"]'
+            };
+            
+            let foundFields = 0;
+            let totalFields = Object.keys(fieldMappings).length;
+            
+            Object.entries(fieldMappings).forEach(([fieldType, selector]) => {
+                const element = document.querySelector(selector);
+                const div = document.createElement('div');
+                div.className = `debug-item ${element ? 'success' : 'error'}`;
+                
+                if (element) {
+                    foundFields++;
+                    div.innerHTML = `<strong>${fieldType}:</strong> ✅ 找到元素 - ${element.tagName.toLowerCase()}${element.id ? '#' + element.id : ''}${element.name ? '[name="' + element.name + '"]' : ''}`;
+                    log(`字段检测 - ${fieldType}: 找到`, 'success');
+                } else {
+                    div.innerHTML = `<strong>${fieldType}:</strong> ❌ 未找到 - 选择器: ${selector}`;
+                    log(`字段检测 - ${fieldType}: 未找到`, 'error');
+                }
+                
+                container.appendChild(div);
+            });
+            
+            // 添加总结
+            const summary = document.createElement('div');
+            summary.className = `debug-item ${foundFields === totalFields ? 'success' : 'warning'}`;
+            summary.innerHTML = `<strong>检测总结:</strong> 找到 ${foundFields}/${totalFields} 个字段`;
+            container.appendChild(summary);
+            
+            log(`字段检测完成: ${foundFields}/${totalFields}`, foundFields === totalFields ? 'success' : 'warning');
+        }
+        
+        // 模拟数据测试
+        function testWithMockData() {
+            const container = document.getElementById('data-test');
+            container.innerHTML = '';
+            
+            const mockData = {
+                name: '张三',
+                phone: '13800138000',
+                email: 'zhangsan@example.com',
+                experience: '3-5',
+                education: '本科',
+                salary: '12k-18k',
+                resume: '我是一名有经验的软件工程师，熟悉JavaScript、Python等编程语言，具有3年以上的项目开发经验。'
+            };
+            
+            const fieldMappings = {
+                name: 'input[name="firstName"], input[id="firstName"], input[name="name"], input[id="name"]',
+                phone: 'input[name="phone"], input[id="phone"], input[type="tel"]',
+                email: 'input[name="email"], input[id="email"], input[type="email"]',
+                experience: 'select[name="experience"], select[id="experience"]',
+                education: 'select[name="education"], select[id="education"]',
+                salary: 'select[name="salary"], select[id="salary"]',
+                resume: 'textarea[name="introduction"], textarea[id="introduction"]'
+            };
+            
+            let filledCount = 0;
+            let totalCount = Object.keys(fieldMappings).length;
+            
+            Object.entries(fieldMappings).forEach(([fieldType, selector]) => {
+                const element = document.querySelector(selector);
+                const div = document.createElement('div');
+                
+                if (element && mockData[fieldType]) {
+                    try {
+                        // 模拟content.js的填写逻辑
+                        if (element.tagName.toLowerCase() === 'select') {
+                            // 处理下拉选择
+                            const options = element.querySelectorAll('option');
+                            let matched = false;
+                            
+                            for (const option of options) {
+                                if (option.value === mockData[fieldType] || 
+                                    option.textContent.includes(mockData[fieldType])) {
+                                    element.value = option.value;
+                                    matched = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (!matched && options.length > 1) {
+                                element.value = options[1].value;
+                            }
+                        } else {
+                            // 处理文本输入
+                            element.value = mockData[fieldType];
+                        }
+                        
+                        // 触发事件
+                        element.dispatchEvent(new Event('input', { bubbles: true }));
+                        element.dispatchEvent(new Event('change', { bubbles: true }));
+                        
+                        filledCount++;
+                        div.className = 'debug-item success';
+                        div.innerHTML = `<strong>${fieldType}:</strong> ✅ 填写成功 - "${mockData[fieldType]}"`;
+                        log(`填写测试 - ${fieldType}: 成功填写 "${mockData[fieldType]}"`, 'success');
+                        
+                        // 添加视觉反馈
+                        element.style.backgroundColor = '#d4edda';
+                        setTimeout(() => {
+                            element.style.backgroundColor = '';
+                        }, 2000);
+                        
+                    } catch (error) {
+                        div.className = 'debug-item error';
+                        div.innerHTML = `<strong>${fieldType}:</strong> ❌ 填写失败 - ${error.message}`;
+                        log(`填写测试 - ${fieldType}: 填写失败 - ${error.message}`, 'error');
+                    }
+                } else {
+                    div.className = 'debug-item warning';
+                    div.innerHTML = `<strong>${fieldType}:</strong> ⚠️ 跳过 - ${!element ? '元素未找到' : '无数据'}`;
+                    log(`填写测试 - ${fieldType}: 跳过`, 'warning');
+                }
+                
+                container.appendChild(div);
+            });
+            
+            // 添加总结
+            const summary = document.createElement('div');
+            summary.className = `debug-item ${filledCount === totalCount ? 'success' : 'warning'}`;
+            summary.innerHTML = `<strong>填写总结:</strong> 成功填写 ${filledCount}/${totalCount} 个字段`;
+            container.appendChild(summary);
+            
+            log(`填写测试完成: ${filledCount}/${totalCount}`, filledCount > 0 ? 'success' : 'error');
+        }
+        
+        function clearAllFields() {
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            log('已清空所有字段', 'info');
+        }
+        
+        // 消息通信测试
+        function testMessageCommunication() {
+            const container = document.getElementById('message-test');
+            container.innerHTML = '';
+            
+            // 发送握手协议消息以建立与扩展的连接
+            const handshakeMessage = {
+                source: 'JIANCAREER_WEBSITE',
+                type: 'SJ_DETECT_V1',
+                timestamp: Date.now(),
+                url: window.location.href,
+                domain: window.location.hostname
+            };
+            
+            // 测试window.postMessage
+            const testMessage = {
+                source: 'JIANCAREER_WEBSITE',
+                type: 'TEST_MESSAGE',
+                timestamp: Date.now(),
+                data: { test: true }
+            };
+            
+            // 监听消息响应
+            const messageListener = (event) => {
+                if (event.data.source === 'JIANCAREER_EXTENSION') {
+                    const div = document.createElement('div');
+                    div.className = 'debug-item success';
+                    div.innerHTML = `<strong>收到扩展响应:</strong> <pre>${JSON.stringify(event.data, null, 2)}</pre>`;
+                    container.appendChild(div);
+                    log(`收到扩展响应: ${event.data.type}`, 'success');
+                    
+                    window.removeEventListener('message', messageListener);
+                }
+            };
+            
+            window.addEventListener('message', messageListener);
+            
+            // 发送测试消息
+            window.postMessage(testMessage, '*');
+            
+            const div = document.createElement('div');
+            div.className = 'debug-item';
+            div.innerHTML = `<strong>发送测试消息:</strong> <pre>${JSON.stringify(testMessage, null, 2)}</pre>`;
+            container.appendChild(div);
+            log('发送测试消息', 'info');
+            
+            // 5秒后检查是否收到响应
+            setTimeout(() => {
+                window.removeEventListener('message', messageListener);
+                if (!container.querySelector('.success')) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'debug-item error';
+                    errorDiv.innerHTML = '<strong>❌ 未收到扩展响应</strong> - 可能原因：扩展未安装或content script未注入';
+                    container.appendChild(errorDiv);
+                    log('消息通信测试失败: 未收到响应', 'error');
+                }
+            }, 5000);
+        }
+        
+        // 页面加载完成后自动执行检测
+        window.addEventListener('load', function() {
+            log('调试页面加载完成', 'info');
+            checkEnvironment();
+            checkFields();
+        });
+        
+        // 监听来自扩展的消息
+        window.addEventListener('message', function(event) {
+            if (event.data.source === 'JIANCAREER_EXTENSION') {
+                log(`收到扩展消息: ${event.data.type}`, 'info');
+                console.log('扩展消息:', event.data);
+            }
+        });
+    </script>
+</body>
+</html>

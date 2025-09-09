@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFill Pro 测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .submit-btn {
+            background: #4A90E2;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background: #357ABD;
+        }
+        .test-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4A90E2;
+        }
+    </style>
+</head>
+<body>
+    <h1>AutoFill Pro 功能测试页面</h1>
+    
+    <div class="test-info">
+        <strong>测试说明：</strong>
+        <ul>
+            <li>安装 AutoFill Pro 扩展后，页面右下角应显示浮窗</li>
+            <li>点击浮窗的"检测表单"按钮测试表单检测功能</li>
+            <li>填写用户档案后，点击"一键填写"测试自动填写功能</li>
+            <li>提交表单后测试投递记录功能</li>
+        </ul>
+    </div>
+
+    <!-- 求职申请表单 -->
+    <div class="form-container">
+        <h2>🎯 求职申请表单</h2>
+        <form id="jobApplicationForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">姓</label>
+                    <input type="text" id="firstName" name="firstName" placeholder="请输入您的姓">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">名</label>
+                    <input type="text" id="lastName" name="lastName" placeholder="请输入您的名">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">邮箱</label>
+                <input type="email" id="email" name="email" placeholder="请输入邮箱地址">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">手机号码</label>
+                    <input type="tel" id="phone" name="phone" placeholder="请输入手机号码">
+                </div>
+                <div class="form-group">
+                    <label for="wechat">微信号</label>
+                    <input type="text" id="wechat" name="wechat" placeholder="请输入微信号">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="location">所在城市</label>
+                <input type="text" id="location" name="location" placeholder="请输入所在城市">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="linkedin">LinkedIn</label>
+                    <input type="url" id="linkedin" name="linkedin" placeholder="LinkedIn 个人主页">
+                </div>
+                <div class="form-group">
+                    <label for="github">GitHub</label>
+                    <input type="url" id="github" name="github" placeholder="GitHub 个人主页">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="portfolio">个人作品集</label>
+                <input type="url" id="portfolio" name="portfolio" placeholder="个人作品集网站">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="school">毕业院校</label>
+                    <input type="text" id="school" name="school" placeholder="请输入毕业院校">
+                </div>
+                <div class="form-group">
+                    <label for="major">专业</label>
+                    <input type="text" id="major" name="major" placeholder="请输入专业">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="graduation">毕业时间</label>
+                    <input type="text" id="graduation" name="graduation" placeholder="如：2023年6月">
+                </div>
+                <div class="form-group">
+                    <label for="gpa">GPA</label>
+                    <input type="text" id="gpa" name="gpa" placeholder="请输入GPA">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="expectedSalary">期望薪资</label>
+                <input type="text" id="expectedSalary" name="expectedSalary" placeholder="请输入期望薪资">
+            </div>
+            
+            <div class="form-group">
+                <label for="selfIntroduction">自我介绍</label>
+                <textarea id="selfIntroduction" name="selfIntroduction" placeholder="请简单介绍一下自己..."></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">提交申请</button>
+        </form>
+    </div>
+
+    <!-- 用户注册表单 -->
+    <div class="form-container">
+        <h2>👤 用户注册表单</h2>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="fullName">姓名</label>
+                <input type="text" id="fullName" name="name" placeholder="请输入完整姓名">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="userEmail">邮箱</label>
+                    <input type="email" id="userEmail" name="email" placeholder="请输入邮箱">
+                </div>
+                <div class="form-group">
+                    <label for="userPhone">电话</label>
+                    <input type="tel" id="userPhone" name="phone" placeholder="请输入电话号码">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="birthday">出生日期</label>
+                    <input type="date" id="birthday" name="birthday">
+                </div>
+                <div class="form-group">
+                    <label for="gender">性别</label>
+                    <select id="gender" name="gender">
+                        <option value="">请选择</option>
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="address">地址</label>
+                <input type="text" id="address" name="address" placeholder="请输入详细地址">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="qq">QQ号</label>
+                    <input type="text" id="qq" name="qq" placeholder="请输入QQ号">
+                </div>
+                <div class="form-group">
+                    <label for="weixinId">微信号</label>
+                    <input type="text" id="weixinId" name="weixin" placeholder="请输入微信号">
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">注册账号</button>
+        </form>
+    </div>
+
+    <script>
+        // 模拟表单提交
+        document.getElementById('jobApplicationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('求职申请已提交！AutoFill Pro 应该记录了这次投递。');
+        });
+        
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('注册成功！');
+        });
+        
+        // 添加一些测试用的控制台输出
+        console.log('测试页面已加载');
+        console.log('检查字段映射:', window.__SJ_FIELD_MAPPINGS__);
+        
+        // 检测页面加载完成后的状态
+        window.addEventListener('load', function() {
+            console.log('页面完全加载完成');
+            setTimeout(() => {
+                console.log('检查 AutoFill Pro 浮窗是否已显示');
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
