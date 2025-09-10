@@ -1732,51 +1732,27 @@ class PopupManager {
       );
 
       const resumeData = {
-        // 基础字段
+        // 原有字段
         name: nameInput?.value || "",
-        firstName: nameInput?.value ? nameInput.value.substring(1) : "",
-        lastName: nameInput?.value ? nameInput.value.charAt(0) : "",
-        fullName: nameInput?.value || "",
-        gender: genderSelect?.value || "",
         phone: phoneInput?.value || "",
-        mobile: phoneInput?.value || "",
         email: emailInput?.value || "",
-        wechat: wechatInput?.value || "",
-        // 地址相关
-        city: expectedCityInput?.value || "",
-        location: expectedCityInput?.value || "",
-        // 教育相关
-        university: universityInput?.value || "",
-        school: universityInput?.value || "",
-        major: majorInput?.value || "",
-        specialty: majorInput?.value || "",
-        graduationDate: graduationYearInput?.value || "",
-        graduationTime: graduationYearInput?.value || "",
-        education: educationSelect?.value || "",
-        degree: educationSelect?.value || "",
-        gpa: "", // 暂时为空，可以后续添加
-        // 工作相关
         experience: experienceSelect?.value || "",
-        workExperience: experienceSelect?.value || "",
+        education: educationSelect?.value || "",
+        salary: salarySelect?.value || "",
+        // 新增字段
+        gender: genderSelect?.value || "",
+        age: ageInput?.value || "",
+        university: universityInput?.value || "",
+        major: majorInput?.value || "",
+        graduationYear: graduationYearInput?.value || "",
         currentCompany: currentCompanyInput?.value || "",
         expectedPosition: expectedPositionInput?.value || "",
-        expectedSalary: salarySelect?.value || "",
-        salary: salarySelect?.value || "",
-        // 技能和介绍
+        expectedCity: expectedCityInput?.value || "",
         skills: skillsInput?.value || "",
-        specialties: skillsInput?.value || "",
-        selfIntroduction: selfIntroductionTextarea?.value || "",
-        introduction: selfIntroductionTextarea?.value || "",
-        description: selfIntroductionTextarea?.value || "",
-        resumeText: selfIntroductionTextarea?.value || "",
-        summary: selfIntroductionTextarea?.value || "",
-        // 项目经验
-        projectExperience: projectExperienceTextarea?.value || "",
-        // 社交链接
+        wechat: wechatInput?.value || "",
         github: githubInput?.value || "",
-        githubUrl: githubInput?.value || "",
-        // 年龄
-        age: ageInput?.value || "",
+        projectExperience: projectExperienceTextarea?.value || "",
+        selfIntroduction: selfIntroductionTextarea?.value || "",
       };
 
       console.log("准备保存简历数据:", resumeData);

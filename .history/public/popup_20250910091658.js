@@ -1698,7 +1698,7 @@ class PopupManager {
   // 保存简历数据
   async saveResumeData() {
     try {
-      // 获取原有表单数据
+      // 获取表单数据
       const nameInput = document.getElementById("edit-name");
       const phoneInput = document.getElementById("edit-phone");
       const emailInput = document.getElementById("edit-email");
@@ -1706,77 +1706,13 @@ class PopupManager {
       const educationSelect = document.getElementById("edit-education");
       const salarySelect = document.getElementById("edit-salary");
 
-      // 获取新增表单数据
-      const genderSelect = document.getElementById("edit-gender");
-      const ageInput = document.getElementById("edit-age");
-      const universityInput = document.getElementById("edit-university");
-      const majorInput = document.getElementById("edit-major");
-      const graduationYearInput = document.getElementById(
-        "edit-graduation-year"
-      );
-      const currentCompanyInput = document.getElementById(
-        "edit-current-company"
-      );
-      const expectedPositionInput = document.getElementById(
-        "edit-expected-position"
-      );
-      const expectedCityInput = document.getElementById("edit-expected-city");
-      const skillsInput = document.getElementById("edit-skills");
-      const wechatInput = document.getElementById("edit-wechat");
-      const githubInput = document.getElementById("edit-github");
-      const projectExperienceTextarea = document.getElementById(
-        "edit-project-experience"
-      );
-      const selfIntroductionTextarea = document.getElementById(
-        "edit-self-introduction"
-      );
-
       const resumeData = {
-        // 基础字段
         name: nameInput?.value || "",
-        firstName: nameInput?.value ? nameInput.value.substring(1) : "",
-        lastName: nameInput?.value ? nameInput.value.charAt(0) : "",
-        fullName: nameInput?.value || "",
-        gender: genderSelect?.value || "",
         phone: phoneInput?.value || "",
-        mobile: phoneInput?.value || "",
         email: emailInput?.value || "",
-        wechat: wechatInput?.value || "",
-        // 地址相关
-        city: expectedCityInput?.value || "",
-        location: expectedCityInput?.value || "",
-        // 教育相关
-        university: universityInput?.value || "",
-        school: universityInput?.value || "",
-        major: majorInput?.value || "",
-        specialty: majorInput?.value || "",
-        graduationDate: graduationYearInput?.value || "",
-        graduationTime: graduationYearInput?.value || "",
-        education: educationSelect?.value || "",
-        degree: educationSelect?.value || "",
-        gpa: "", // 暂时为空，可以后续添加
-        // 工作相关
         experience: experienceSelect?.value || "",
-        workExperience: experienceSelect?.value || "",
-        currentCompany: currentCompanyInput?.value || "",
-        expectedPosition: expectedPositionInput?.value || "",
-        expectedSalary: salarySelect?.value || "",
+        education: educationSelect?.value || "",
         salary: salarySelect?.value || "",
-        // 技能和介绍
-        skills: skillsInput?.value || "",
-        specialties: skillsInput?.value || "",
-        selfIntroduction: selfIntroductionTextarea?.value || "",
-        introduction: selfIntroductionTextarea?.value || "",
-        description: selfIntroductionTextarea?.value || "",
-        resumeText: selfIntroductionTextarea?.value || "",
-        summary: selfIntroductionTextarea?.value || "",
-        // 项目经验
-        projectExperience: projectExperienceTextarea?.value || "",
-        // 社交链接
-        github: githubInput?.value || "",
-        githubUrl: githubInput?.value || "",
-        // 年龄
-        age: ageInput?.value || "",
       };
 
       console.log("准备保存简历数据:", resumeData);

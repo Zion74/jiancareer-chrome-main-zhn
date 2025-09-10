@@ -575,7 +575,10 @@ class JianCareerContentScript {
     console.log("开始自动填写，网站类型:", siteKey);
     console.log("简历数据:", profileData);
     console.log("字段映射:", mappings);
-    console.log("[DEBUG] 完整的profileData内容:", JSON.stringify(profileData, null, 2));
+    console.log(
+      "[DEBUG] 完整的profileData内容:",
+      JSON.stringify(profileData, null, 2)
+    );
 
     // 模拟填写进度
     const progressCallback = (progress) => {
@@ -632,10 +635,16 @@ class JianCareerContentScript {
         // 获取字段值
         const value = this.getFieldValue(fieldType, profileData);
         console.log(`📝 字段 ${fieldType} 的值:`, value);
-        console.log(`[DEBUG] 字段 ${fieldType} 从profileData获取的原始值:`, profileData[fieldType]);
+        console.log(
+          `[DEBUG] 字段 ${fieldType} 从profileData获取的原始值:`,
+          profileData[fieldType]
+        );
         if (!value) {
           console.log(`⚠️ 字段 ${fieldType} 没有对应的值`);
-          console.log(`[DEBUG] profileData中是否存在该字段:`, fieldType in profileData);
+          console.log(
+            `[DEBUG] profileData中是否存在该字段:`,
+            fieldType in profileData
+          );
           failedCount++;
           missingFields.push(fieldType);
           details.push({
@@ -649,7 +658,9 @@ class JianCareerContentScript {
 
         // 填写字段
         console.log(`🚀 正在填写字段: ${fieldType} = ${value}`);
-        console.log(`[DEBUG] 元素类型: ${element.tagName}, 输入类型: ${element.type}, ID: ${element.id}, Name: ${element.name}`);
+        console.log(
+          `[DEBUG] 元素类型: ${element.tagName}, 输入类型: ${element.type}, ID: ${element.id}, Name: ${element.name}`
+        );
         const fillResult = await this.fillField(element, value, fieldType);
         if (fillResult !== false) {
           filledCount++;

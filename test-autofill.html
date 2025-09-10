@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动填写功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .test-button:hover {
+            background: #005a87;
+        }
+        .test-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .log-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status.warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .status.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .field-mapping {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .mapping-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #007cba;
+        }
+        .form-preview {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            flex: 1;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 自动填写功能测试工具</h1>
+        <p>此工具用于测试和验证简历自动填写插件的功能修复效果</p>
+        
+        <div class="test-section">
+            <h2>📋 测试控制面板</h2>
+            <button class="test-button" onclick="testContentScriptLoading()">测试Content Script加载</button>
+            <button class="test-button" onclick="testFieldMapping()">测试字段映射</button>
+            <button class="test-button" onclick="testDataRetrieval()">测试数据获取</button>
+            <button class="test-button" onclick="simulateAutofill()">模拟自动填写</button>
+            <button class="test-button" onclick="clearLogs()">清空日志</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 测试状态</h2>
+            <div id="test-status"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔍 字段映射检查</h2>
+            <div class="field-mapping" id="field-mapping"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📝 测试表单</h2>
+            <div class="form-preview">
+                <form id="test-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">名字</label>
+                            <input type="text" id="firstName" name="firstName" placeholder="请输入您的姓名">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">姓氏</label>
+                            <input type="text" id="lastName" name="lastName" placeholder="请输入您的姓氏">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">邮箱地址</label>
+                            <input type="email" id="email" name="email" placeholder="example@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">联系电话</label>
+                            <input type="tel" id="phone" name="phone" placeholder="请输入手机号码">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="university">毕业院校</label>
+                            <input type="text" id="university" name="university" placeholder="请输入毕业院校">
+                        </div>
+                        <div class="form-group">
+                            <label for="major">专业</label>
+                            <input type="text" id="major" name="major" placeholder="请输入专业">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="location">所在城市</label>
+                            <input type="text" id="location" name="location" placeholder="如：北京市">
+                        </div>
+                        <div class="form-group">
+                            <label for="education">学历水平</label>
+                            <input type="text" id="education" name="education" placeholder="请输入学历水平">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="github">Github</label>
+                            <input type="text" id="github" name="github" placeholder="请输入Github地址">
+                        </div>
+                        <div class="form-group">
+                            <label for="gpa">GPA</label>
+                            <input type="text" id="gpa" name="gpa" placeholder="请输入GPA">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="skills">专业技能</label>
+                        <textarea id="skills" name="skills" placeholder="请描述您的专业技能"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="introduction">个人简介</label>
+                        <textarea id="introduction" name="introduction" placeholder="请简要介绍您的工作经历和个人优势"></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📋 测试日志</h2>
+            <div class="log-area" id="test-logs"></div>
+        </div>
+    </div>
+    
+    <script src="public/content.js"></script>
+    <script>
+        let testLogs = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            testLogs.push({ message: logEntry, type });
+            updateLogDisplay();
+            console.log(logEntry);
+        }
+        
+        function updateLogDisplay() {
+            const logArea = document.getElementById('test-logs');
+            logArea.textContent = testLogs.map(entry => entry.message).join('\n');
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+        
+        function clearLogs() {
+            testLogs = [];
+            updateLogDisplay();
+        }
+        
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('test-status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function testContentScriptLoading() {
+            log('🔍 测试Content Script加载状态...');
+            
+            if (typeof JianCareerContentScript !== 'undefined') {
+                log('✅ JianCareerContentScript类已加载');
+                showStatus('Content Script加载成功', 'success');
+                
+                // 测试实例化
+                try {
+                    const instance = new JianCareerContentScript();
+                    log('✅ Content Script实例化成功');
+                    window.testContentScript = instance;
+                } catch (error) {
+                    log(`❌ Content Script实例化失败: ${error.message}`, 'error');
+                    showStatus('Content Script实例化失败', 'error');
+                }
+            } else {
+                log('❌ JianCareerContentScript类未找到');
+                showStatus('Content Script未加载', 'error');
+            }
+        }
+        
+        function testFieldMapping() {
+            log('🔍 测试字段映射配置...');
+            
+            if (!window.testContentScript) {
+                log('❌ 请先测试Content Script加载');
+                return;
+            }
+            
+            const mappings = window.testContentScript.fieldMappings.mock;
+            const mappingDiv = document.getElementById('field-mapping');
+            mappingDiv.innerHTML = '';
+            
+            let foundFields = 0;
+            let totalFields = 0;
+            
+            for (const [fieldName, selector] of Object.entries(mappings)) {
+                totalFields++;
+                const element = document.querySelector(selector);
+                const found = element !== null;
+                if (found) foundFields++;
+                
+                const mappingItem = document.createElement('div');
+                mappingItem.className = 'mapping-item';
+                mappingItem.innerHTML = `
+                    <strong>${fieldName}</strong><br>
+                    <small>选择器: ${selector}</small><br>
+                    <span style="color: ${found ? 'green' : 'red'}">
+                        ${found ? '✅ 找到元素' : '❌ 未找到元素'}
+                    </span>
+                `;
+                mappingDiv.appendChild(mappingItem);
+                
+                log(`${found ? '✅' : '❌'} 字段 ${fieldName}: ${found ? '找到' : '未找到'}`);
+            }
+            
+            const successRate = (foundFields / totalFields * 100).toFixed(1);
+            log(`📊 字段映射测试完成: ${foundFields}/${totalFields} (${successRate}%)`);
+            showStatus(`字段映射: ${foundFields}/${totalFields} 个字段找到 (${successRate}%)`, 
+                      successRate >= 80 ? 'success' : successRate >= 60 ? 'warning' : 'error');
+        }
+        
+        function testDataRetrieval() {
+            log('🔍 测试数据获取功能...');
+            
+            // 模拟默认数据
+            const testData = {
+                name: '宝矿力',
+                firstName: '宝',
+                lastName: '矿力',
+                phone: '13344556677',
+                email: 'baokuangli@outlook.com',
+                university: '浙江大学',
+                major: '计算机科学与技术',
+                location: '浙江杭州',
+                education: '本科',
+                github: 'https://github.com/baokuangli',
+                gpa: '3.8',
+                skills: 'JavaScript, Python, React, Vue.js, Node.js, MySQL',
+                introduction: '我是一名热爱编程的软件工程师，具有丰富的前端和后端开发经验。'
+            };
+            
+            let validFields = 0;
+            let totalFields = 0;
+            
+            for (const [key, value] of Object.entries(testData)) {
+                totalFields++;
+                if (value && value.toString().trim()) {
+                    validFields++;
+                    log(`✅ ${key}: ${value}`);
+                } else {
+                    log(`❌ ${key}: 空值或无效`);
+                }
+            }
+            
+            log(`📊 数据验证完成: ${validFields}/${totalFields} 个字段有效`);
+            showStatus(`数据验证: ${validFields}/${totalFields} 个字段有效`, 
+                      validFields === totalFields ? 'success' : 'warning');
+        }
+        
+        async function simulateAutofill() {
+            log('🚀 开始模拟自动填写...');
+            
+            if (!window.testContentScript) {
+                log('❌ 请先测试Content Script加载');
+                showStatus('请先加载Content Script', 'error');
+                return;
+            }
+            
+            const testData = {
+                name: '宝矿力',
+                firstName: '宝',
+                lastName: '矿力',
+                phone: '13344556677',
+                email: 'baokuangli@outlook.com',
+                university: '浙江大学',
+                major: '计算机科学与技术',
+                location: '浙江杭州',
+                education: '本科',
+                github: 'https://github.com/baokuangli',
+                gpa: '3.8',
+                skills: 'JavaScript, Python, React, Vue.js, Node.js, MySQL',
+                introduction: '我是一名热爱编程的软件工程师，具有丰富的前端和后端开发经验。'
+            };
+            
+            try {
+                // 模拟自动填写请求
+                const message = {
+                    type: 'JC_AUTOFILL',
+                    data: testData,
+                    timestamp: Date.now()
+                };
+                
+                log('📤 发送自动填写请求...');
+                
+                // 调用handleAutofill方法
+                const result = await window.testContentScript.handleAutofill(message, (response) => {
+                    log('📥 收到填写响应:', 'info');
+                    log(JSON.stringify(response, null, 2));
+                    
+                    if (response.success) {
+                        const { filled, total, failed } = response.stats || {};
+                        showStatus(`自动填写完成: 成功 ${filled}/${total} 个字段`, 
+                                  failed === 0 ? 'success' : 'warning');
+                    } else {
+                        showStatus(`自动填写失败: ${response.error}`, 'error');
+                    }
+                });
+                
+            } catch (error) {
+                log(`❌ 自动填写异常: ${error.message}`, 'error');
+                showStatus(`自动填写异常: ${error.message}`, 'error');
+            }
+        }
+        
+        // 页面加载完成后自动运行基础测试
+        window.addEventListener('load', function() {
+            log('🎯 自动填写功能测试工具已加载');
+            log('💡 点击上方按钮开始测试各项功能');
+            showStatus('测试工具已准备就绪', 'info');
+        });
+        
+        // 监听表单字段变化
+        document.addEventListener('input', function(e) {
+            if (e.target.matches('input, textarea')) {
+                log(`📝 字段 ${e.target.id || e.target.name} 已填写: ${e.target.value}`);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,272 +5,244 @@ class JianCareerContentScript {
   constructor() {
     this.isProcessing = false;
     this.supportedSites = {
-      "zhipin.com": "boss",
-      "lagou.com": "lagou",
-      "51job.com": "job51",
-      "liepin.com": "liepin",
-      "linkedin.com": "linkedin",
-      localhost: "mock", // 支持本地测试页面
-      "127.0.0.1": "mock",
-      "mock-form.html": "mock",
+      'zhipin.com': 'boss',
+      'lagou.com': 'lagou',
+      '51job.com': 'job51',
+      'liepin.com': 'liepin',
+      'linkedin.com': 'linkedin',
+      'localhost': 'mock', // 支持本地测试页面
+      '127.0.0.1': 'mock',
+      'mock-form.html': 'mock'
     };
-
+    
     this.fieldMappings = {
       boss: {
         name: 'input[name="name"], input[placeholder*="姓名"], input[placeholder*="真实姓名"]',
-        phone:
-          'input[name="phone"], input[placeholder*="手机"], input[type="tel"]',
-        email:
-          'input[name="email"], input[type="email"], input[placeholder*="邮箱"]',
+        phone: 'input[name="phone"], input[placeholder*="手机"], input[type="tel"]',
+        email: 'input[name="email"], input[type="email"], input[placeholder*="邮箱"]',
         experience: 'input[name="experience"], select[name="experience"]',
         education: 'input[name="education"], select[name="education"]',
-        resume:
-          'input[type="file"], textarea[name="resume"], textarea[placeholder*="简历"]',
+        resume: 'input[type="file"], textarea[name="resume"], textarea[placeholder*="简历"]'
       },
       lagou: {
         name: 'input[name="realName"], input[placeholder*="姓名"]',
         phone: 'input[name="phone"], input[placeholder*="手机号"]',
         email: 'input[name="email"], input[placeholder*="邮箱"]',
         experience: 'select[name="workYear"]',
-        education: 'select[name="education"]',
+        education: 'select[name="education"]'
       },
       job51: {
         name: 'input[name="name"], input[id="name"]',
         phone: 'input[name="mobile"], input[id="mobile"]',
         email: 'input[name="email"], input[id="email"]',
         experience: 'select[name="workyear"]',
-        education: 'select[name="degree"]',
+        education: 'select[name="degree"]'
       },
       liepin: {
         name: 'input[name="name"], input[placeholder*="姓名"]',
         phone: 'input[name="mobile"], input[placeholder*="手机"]',
         email: 'input[name="email"], input[placeholder*="邮箱"]',
         experience: 'select[name="currentStatus"]',
-        education: 'select[name="degree"]',
+        education: 'select[name="degree"]'
       },
       linkedin: {
         name: 'input[name="firstName"], input[name="lastName"]',
         phone: 'input[name="phoneNumber"]',
         email: 'input[name="email"]',
         experience: 'input[name="experience"]',
-        education: 'input[name="education"]',
+        education: 'input[name="education"]'
       },
       mock: {
         name: '#name, input[name="name"], input[placeholder*="姓名"], input[placeholder*="名字"]',
-        gender:
-          '#gender, select[name="gender"], input[name="gender"], select[placeholder*="性别"], input[placeholder*="性别"]',
-        phone:
-          '#phone, input[name="phone"], input[type="tel"], input[placeholder*="电话"], input[placeholder*="手机"]',
-        email:
-          '#email, input[name="email"], input[type="email"], input[placeholder*="邮箱"], input[placeholder*="email"]',
-        university:
-          '#university, input[name="university"], input[name="school"], input[placeholder*="学校"], input[placeholder*="院校"]',
+        gender: '#gender, select[name="gender"], input[name="gender"], select[placeholder*="性别"], input[placeholder*="性别"]',
+        phone: '#phone, input[name="phone"], input[type="tel"], input[placeholder*="电话"], input[placeholder*="手机"]',
+        email: '#email, input[name="email"], input[type="email"], input[placeholder*="邮箱"], input[placeholder*="email"]',
+        university: '#university, input[name="university"], input[name="school"], input[placeholder*="学校"], input[placeholder*="院校"]',
         major: '#major, input[name="major"], input[placeholder*="专业"]',
-        location:
-          '#location, input[name="location"], input[placeholder*="城市"], input[placeholder*="地址"]',
-        education:
-          '#education, select[name="education"], input[name="education"], select[placeholder*="学历"], input[placeholder*="学历"]',
-        github:
-          '#github, input[name="github"], input[placeholder*="github"], input[placeholder*="GitHub"]',
+        location: '#location, input[name="location"], input[placeholder*="城市"], input[placeholder*="地址"]',
+        education: '#education, select[name="education"], input[name="education"], select[placeholder*="学历"], input[placeholder*="学历"]',
+        github: '#github, input[name="github"], input[placeholder*="github"], input[placeholder*="GitHub"]',
         gpa: '#gpa, input[name="gpa"], input[placeholder*="GPA"], input[placeholder*="绩点"]',
-        skills:
-          '#skills, textarea[name="skills"], textarea[placeholder*="技能"], textarea[placeholder*="专业"]',
-        introduction:
-          '#introduction, textarea[name="introduction"], textarea[placeholder*="简介"], textarea[placeholder*="介绍"]',
-        experience:
-          '#experience, textarea[name="experience"], textarea[placeholder*="经验"], textarea[placeholder*="经历"]',
-        salary:
-          '#salary, input[name="salary"], input[placeholder*="薪资"], input[placeholder*="工资"]',
-        resume:
-          '#resume, input[type="file"][name="resume"], input[accept*=".pdf"]',
+        skills: '#skills, textarea[name="skills"], textarea[placeholder*="技能"], textarea[placeholder*="专业"]',
+        introduction: '#introduction, textarea[name="introduction"], textarea[placeholder*="简介"], textarea[placeholder*="介绍"]',
+        experience: '#experience, textarea[name="experience"], textarea[placeholder*="经验"], textarea[placeholder*="经历"]',
+        salary: '#salary, input[name="salary"], input[placeholder*="薪资"], input[placeholder*="工资"]',
+        resume: '#resume, input[type="file"][name="resume"], input[accept*=".pdf"]',
         wechat: '#wechat, input[name="wechat"], input[placeholder*="微信"]',
-        graduationTime:
-          '#graduationTime, input[name="graduationTime"], input[name="graduation"], input[placeholder*="毕业"]',
-      },
+        graduationTime: '#graduationTime, input[name="graduationTime"], input[name="graduation"], input[placeholder*="毕业"]'
+      }
     };
-
+    
     this.init();
   }
 
   init() {
-    console.log("JianCareer Content Script 初始化开始");
-
+    console.log('JianCareer Content Script 初始化开始');
+    
     // 设置Chrome扩展消息监听器
-    if (
-      typeof chrome !== "undefined" &&
-      chrome.runtime &&
-      chrome.runtime.onMessage
-    ) {
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
       chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        console.log("收到Chrome扩展消息:", message);
-
+        console.log('收到Chrome扩展消息:', message);
+        
         try {
-          if (message.type === "JC_AUTOFILL") {
-            console.log("处理自动填写请求:", message);
+          if (message.type === 'JC_AUTOFILL') {
+            console.log('处理自动填写请求:', message);
             this.handleAutofill(message, sendResponse);
             return true; // 保持消息通道开放
-          } else if (message.type === "JC_DETECT") {
-            console.log("处理检测请求:", message);
+          } else if (message.type === 'JC_DETECT') {
+            console.log('处理检测消息');
             this.handleDetectMessage(message, sendResponse);
             return true;
-          } else if (message.type === "JC_PING") {
-            console.log("收到ping消息");
-            sendResponse({
-              type: "JC_PONG",
-              success: true,
-              timestamp: Date.now(),
-            });
+          } else if (message.type === 'JC_PING') {
+            console.log('收到ping消息');
+            sendResponse({ type: 'JC_PONG', success: true, timestamp: Date.now() });
             return true;
           }
         } catch (error) {
-          console.error("处理Chrome扩展消息时出错:", error);
+          console.error('处理Chrome扩展消息时出错:', error);
           sendResponse({ success: false, error: error.message });
         }
-
+        
         return false;
       });
-      console.log("Chrome扩展消息监听器已设置");
+      console.log('Chrome扩展消息监听器已设置');
     } else {
-      console.warn("Chrome扩展API不可用");
+      console.warn('Chrome扩展API不可用');
     }
-
+    
     // 设置网页消息监听器
-    window.addEventListener("message", (event) => {
+    window.addEventListener('message', (event) => {
       this.handleWebsiteMessage(event);
     });
-
+    
     // 设置全局标识，让网页能够检测到Content Script
     window.jiancareerContentScript = true;
-    window.jiancareerExtensionId =
-      chrome.runtime && chrome.runtime.id ? chrome.runtime.id : "unknown";
-
-    console.log("JianCareer Content Script 初始化完成");
+    window.jiancareerExtensionId = chrome.runtime && chrome.runtime.id ? chrome.runtime.id : 'unknown';
+    
+    console.log('JianCareer Content Script 初始化完成');
   }
 
   handleWebsiteMessage(event) {
     // 只处理来自同一页面的消息
     if (event.source !== window) return;
-
+    
     const message = event.data;
     if (!message || !message.type) {
       return;
     }
-
-    console.log("收到网页消息:", message);
-
+    
+    console.log('收到网页消息:', message);
+    
     try {
       switch (message.type) {
-        case "SJ_DETECT_V1":
-        case "JC_DETECT":
-          console.log("处理网页检测消息");
+        case 'SJ_DETECT_V1':
+        case 'JC_DETECT':
+          console.log('处理网页检测消息');
           this.handleDetectMessage(message, null);
           break;
-        case "JC_START_TUTORIAL":
-          console.log("处理教程开始消息");
+        case 'JC_START_TUTORIAL':
+          console.log('处理教程开始消息');
           this.handleTutorialStart(message);
           break;
-        case "JC_PING":
-          console.log("处理网页Ping消息");
+        case 'JC_PING':
+          console.log('处理网页Ping消息');
           const pongResponse = {
-            type: "JC_PONG",
+            type: 'JC_PONG',
             id: message.id,
             timestamp: Date.now(),
-            success: true,
+            success: true
           };
-          window.postMessage(pongResponse, "*");
-          console.log("发送Pong响应:", pongResponse);
+          window.postMessage(pongResponse, '*');
+          console.log('发送Pong响应:', pongResponse);
           break;
-        case "JC_AUTOFILL":
-          console.log("处理网页自动填写消息");
+        case 'JC_AUTOFILL':
+          console.log('处理网页自动填写消息');
           this.handleAutofillFromWebsite(message);
           break;
-        case "TEST_MESSAGE":
-          console.log("处理测试消息");
+        case 'TEST_MESSAGE':
+          console.log('处理测试消息');
           const testResponse = {
-            source: "JIANCAREER_EXTENSION",
-            type: "TEST_RESPONSE",
+            source: 'JIANCAREER_EXTENSION',
+            type: 'TEST_RESPONSE',
             timestamp: Date.now(),
-            originalMessage: message,
+            originalMessage: message
           };
-          window.postMessage(testResponse, "*");
-          console.log("发送测试响应:", testResponse);
+          window.postMessage(testResponse, '*');
+          console.log('发送测试响应:', testResponse);
           break;
         default:
-          console.log("未知消息类型:", message.type);
+          console.log('未知消息类型:', message.type);
       }
     } catch (error) {
-      console.error("处理网页消息时出错:", error);
+      console.error('处理网页消息时出错:', error);
       const errorResponse = {
-        type: "ERROR_RESPONSE",
+        type: 'ERROR_RESPONSE',
         id: message.id,
         timestamp: Date.now(),
         error: error.message,
-        originalMessage: message,
+        originalMessage: message
       };
-      window.postMessage(errorResponse, "*");
+      window.postMessage(errorResponse, '*');
     }
   }
 
   handleDetectMessage(message, sendResponse) {
-    console.log("[握手协议] 处理检测消息");
-
+    console.log('[握手协议] 处理检测消息');
+    
     try {
       // 检测当前网站和表单
       const currentSite = this.detectCurrentSite();
       const forms = currentSite ? this.detectForms(currentSite) : [];
-
+      
       const response = {
         success: true,
-        type: "JC_DETECT_RESPONSE",
+        type: 'JC_DETECT_RESPONSE',
         id: message.id,
         timestamp: Date.now(),
         url: window.location.href,
         domain: window.location.hostname,
         site: currentSite,
         formsDetected: forms.length,
-        forms: forms.map((form) => ({
-          id: form.id || "unknown",
-          className: form.className || "",
-          fieldsCount: form.querySelectorAll("input, select, textarea").length,
-        })),
+        forms: forms.map(form => ({
+          id: form.id || 'unknown',
+          className: form.className || '',
+          fieldsCount: form.querySelectorAll('input, select, textarea').length
+        }))
       };
-
-      console.log("[握手协议] 发送检测响应:", response);
-
+      
+      console.log('[握手协议] 发送检测响应:', response);
+      
       if (sendResponse) {
         sendResponse(response);
       }
-
+      
       // 同时发送window消息用于调试页面
       const ackMessage = {
-        source: "JIANCAREER_EXTENSION",
-        type: "SJ_ACK_V1",
+        source: 'JIANCAREER_EXTENSION',
+        type: 'SJ_ACK_V1',
         timestamp: Date.now(),
-        extensionId:
-          chrome.runtime && chrome.runtime.id ? chrome.runtime.id : "unknown",
-        version:
-          chrome.runtime && chrome.runtime.getManifest
-            ? chrome.runtime.getManifest().version
-            : "1.0.0",
+        extensionId: chrome.runtime && chrome.runtime.id ? chrome.runtime.id : 'unknown',
+        version: chrome.runtime && chrome.runtime.getManifest ? chrome.runtime.getManifest().version : '1.0.0',
         capabilities: {
           autofill: true,
           tutorial: true,
-          dataSync: true,
+          dataSync: true
         },
-        data: response,
+        data: response
       };
-
-      window.postMessage(ackMessage, "*");
-      console.log("[握手协议] 发送ACK响应:", ackMessage);
+      
+      window.postMessage(ackMessage, '*');
+      console.log('[握手协议] 发送ACK响应:', ackMessage);
+      
     } catch (error) {
-      console.error("[握手协议] 检测消息处理失败:", error);
+      console.error('[握手协议] 检测消息处理失败:', error);
       const errorResponse = {
         success: false,
         error: error.message,
-        type: "JC_DETECT_ERROR",
-        timestamp: Date.now(),
+        type: 'JC_DETECT_ERROR',
+        timestamp: Date.now()
       };
-
+      
       if (sendResponse) {
         sendResponse(errorResponse);
       }
@@ -278,165 +250,165 @@ class JianCareerContentScript {
   }
 
   handleTutorialStart(message) {
-    console.log("[握手协议] 处理教程开始消息:", message);
-
+    console.log('[握手协议] 处理教程开始消息:', message);
+    
     // 检查当前页面是否支持教程
     const currentSite = this.detectCurrentSite();
     const forms = currentSite ? this.detectForms(currentSite) : [];
-
+    
     if (!currentSite || forms.length === 0) {
       // 发送教程错误消息
       const errorMessage = {
-        source: "JIANCAREER_EXTENSION",
-        type: "TUTORIAL_ERROR",
+        source: 'JIANCAREER_EXTENSION',
+        type: 'TUTORIAL_ERROR',
         timestamp: Date.now(),
         error: {
-          code: "UNSUPPORTED_SITE",
-          message: "当前页面不支持自动填写教程",
-        },
+          code: 'UNSUPPORTED_SITE',
+          message: '当前页面不支持自动填写教程'
+        }
       };
-
-      window.postMessage(errorMessage, "*");
-      console.log("[握手协议] 发送教程错误:", errorMessage);
+      
+      window.postMessage(errorMessage, '*');
+      console.log('[握手协议] 发送教程错误:', errorMessage);
       return;
     }
-
+    
     // 开始教程演示
     this.startTutorialDemo(currentSite, forms)
       .then(() => {
         // 发送教程完成消息
         const doneMessage = {
-          source: "JIANCAREER_EXTENSION",
-          type: "TUTORIAL_DONE",
+          source: 'JIANCAREER_EXTENSION',
+          type: 'TUTORIAL_DONE',
           timestamp: Date.now(),
           result: {
             site: currentSite,
             formsFound: forms.length,
-            success: true,
-          },
+            success: true
+          }
         };
-
-        window.postMessage(doneMessage, "*");
-        console.log("[握手协议] 发送教程完成:", doneMessage);
+        
+        window.postMessage(doneMessage, '*');
+        console.log('[握手协议] 发送教程完成:', doneMessage);
       })
       .catch((error) => {
         // 发送教程错误消息
         const errorMessage = {
-          source: "JIANCAREER_EXTENSION",
-          type: "TUTORIAL_ERROR",
+          source: 'JIANCAREER_EXTENSION',
+          type: 'TUTORIAL_ERROR',
           timestamp: Date.now(),
           error: {
-            code: "TUTORIAL_FAILED",
-            message: error.message || "教程执行失败",
-          },
+            code: 'TUTORIAL_FAILED',
+            message: error.message || '教程执行失败'
+          }
         };
-
-        window.postMessage(errorMessage, "*");
-        console.log("[握手协议] 发送教程错误:", errorMessage);
+        
+        window.postMessage(errorMessage, '*');
+        console.log('[握手协议] 发送教程错误:', errorMessage);
       });
   }
 
   async startTutorialDemo(siteKey, forms) {
-    console.log("[教程演示] 开始演示:", { siteKey, formsCount: forms.length });
-
+    console.log('[教程演示] 开始演示:', { siteKey, formsCount: forms.length });
+    
     // 模拟教程数据
     const demoData = {
-      name: "张三",
-      phone: "13800138000",
-      email: "zhangsan@example.com",
-      experience: "3-5年",
-      education: "本科",
-      resume: "这是一份演示简历内容...",
+      name: '张三',
+      phone: '13800138000',
+      email: 'zhangsan@example.com',
+      experience: '3-5年',
+      education: '本科',
+      resume: '这是一份演示简历内容...'
     };
-
+    
     const mappings = this.fieldMappings[siteKey];
     if (!mappings) {
-      throw new Error("不支持的网站类型");
+      throw new Error('不支持的网站类型');
     }
-
+    
     // 逐个高亮并填写字段
     for (const [fieldType, selector] of Object.entries(mappings)) {
       const element = document.querySelector(selector);
       if (!element) continue;
-
+      
       // 高亮元素
       this.highlightElement(element);
-
+      
       // 等待一段时间让用户看到高亮
       await this.delay(1000);
-
+      
       // 填写演示数据
       const value = demoData[fieldType];
       if (value) {
         await this.fillField(element, value);
       }
-
+      
       // 移除高亮
       this.removeHighlight(element);
-
+      
       // 短暂延迟
       await this.delay(500);
     }
-
-    console.log("[教程演示] 演示完成");
+    
+    console.log('[教程演示] 演示完成');
   }
 
   highlightElement(element) {
-    element.style.outline = "3px solid #00b0c2";
-    element.style.outlineOffset = "2px";
-    element.style.backgroundColor = "rgba(0, 176, 194, 0.1)";
-    element.scrollIntoView({ behavior: "smooth", block: "center" });
+    element.style.outline = '3px solid #00b0c2';
+    element.style.outlineOffset = '2px';
+    element.style.backgroundColor = 'rgba(0, 176, 194, 0.1)';
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   removeHighlight(element) {
-    element.style.outline = "";
-    element.style.outlineOffset = "";
-    element.style.backgroundColor = "";
+    element.style.outline = '';
+    element.style.outlineOffset = '';
+    element.style.backgroundColor = '';
   }
 
   handleAutofillFromWebsite(message) {
-    console.log("处理来自网页的自动填写请求:", message);
-
+    console.log('处理来自网页的自动填写请求:', message);
+    
     try {
       const currentSite = this.detectCurrentSite();
       if (!currentSite) {
-        throw new Error("不支持的网站类型");
+        throw new Error('不支持的网站类型');
       }
-
+      
       const data = message.data || {};
       this.performAutofill(currentSite, data)
         .then(() => {
           const response = {
-            type: "JC_AUTOFILL_RESPONSE",
+            type: 'JC_AUTOFILL_RESPONSE',
             id: message.id,
             timestamp: Date.now(),
             success: true,
-            message: "自动填写完成",
+            message: '自动填写完成'
           };
-          window.postMessage(response, "*");
-          console.log("发送自动填写响应:", response);
+          window.postMessage(response, '*');
+          console.log('发送自动填写响应:', response);
         })
         .catch((error) => {
           const errorResponse = {
-            type: "JC_AUTOFILL_RESPONSE",
+            type: 'JC_AUTOFILL_RESPONSE',
             id: message.id,
             timestamp: Date.now(),
             success: false,
-            error: error.message,
+            error: error.message
           };
-          window.postMessage(errorResponse, "*");
-          console.error("自动填写失败:", error);
+          window.postMessage(errorResponse, '*');
+          console.error('自动填写失败:', error);
         });
     } catch (error) {
       const errorResponse = {
-        type: "JC_AUTOFILL_RESPONSE",
+        type: 'JC_AUTOFILL_RESPONSE',
         id: message.id,
         timestamp: Date.now(),
         success: false,
-        error: error.message,
+        error: error.message
       };
-      window.postMessage(errorResponse, "*");
-      console.error("处理自动填写请求失败:", error);
+      window.postMessage(errorResponse, '*');
+      console.error('处理自动填写请求失败:', error);
     }
   }
 
@@ -444,22 +416,22 @@ class JianCareerContentScript {
     if (this.isProcessing) {
       sendResponse({
         ok: false,
-        reason: "ALREADY_PROCESSING",
-        detail: "正在处理中，请稍候",
+        reason: 'ALREADY_PROCESSING',
+        detail: '正在处理中，请稍候'
       });
       return;
     }
 
     this.isProcessing = true;
-
+    
     try {
       // 检查当前网站是否支持
       const currentSite = this.detectCurrentSite();
       if (!currentSite) {
         sendResponse({
           ok: false,
-          reason: "UNSUPPORTED_SITE",
-          detail: "当前站点暂不支持自动填写",
+          reason: 'UNSUPPORTED_SITE',
+          detail: '当前站点暂不支持自动填写'
         });
         return;
       }
@@ -469,36 +441,30 @@ class JianCareerContentScript {
       if (forms.length === 0) {
         sendResponse({
           ok: false,
-          reason: "NO_FORM",
-          detail: "未找到可填写的表单",
+          reason: 'NO_FORM',
+          detail: '未找到可填写的表单'
         });
         return;
       }
 
       // 检查简历数据
-      if (
-        !message.profileSummary ||
-        Object.keys(message.profileSummary).length === 0
-      ) {
+      if (!message.profileSummary || Object.keys(message.profileSummary).length === 0) {
         sendResponse({
           ok: false,
-          reason: "NO_PROFILE",
-          detail: "请先完善简历资料",
+          reason: 'NO_PROFILE',
+          detail: '请先完善简历资料'
         });
         return;
       }
 
       // 执行自动填写
-      const result = await this.performAutofill(
-        currentSite,
-        message.profileSummary
-      );
-
+      const result = await this.performAutofill(currentSite, message.profileSummary);
+      
       // 如果是mock页面，发送填写完成消息
-      if (currentSite === "mock") {
+      if (currentSite === 'mock') {
         this.notifyPageFillComplete(result);
       }
-
+      
       sendResponse({
         ok: result.ok,
         filledCount: result.filledCount,
@@ -506,14 +472,15 @@ class JianCareerContentScript {
         detail: result.detail,
         failed: result.failed || 0,
         details: result.details || [],
-        errors: result.errors || [],
+        errors: result.errors || []
       });
+      
     } catch (error) {
-      console.error("Autofill error:", error);
+      console.error('Autofill error:', error);
       sendResponse({
         ok: false,
-        reason: "UNKNOWN",
-        detail: error.message || "未知错误",
+        reason: 'UNKNOWN',
+        detail: error.message || '未知错误'
       });
     } finally {
       this.isProcessing = false;
@@ -523,17 +490,15 @@ class JianCareerContentScript {
   detectCurrentSite() {
     const hostname = window.location.hostname;
     const pathname = window.location.pathname;
-
+    
     // 特殊处理mock页面和debug页面
-    if (
-      pathname.includes("mock-form.html") ||
-      pathname.includes("debug-autofill.html") ||
-      hostname === "localhost" ||
-      hostname === "127.0.0.1"
-    ) {
-      return "mock";
+    if (pathname.includes('mock-form.html') || 
+        pathname.includes('debug-autofill.html') ||
+        hostname === 'localhost' || 
+        hostname === '127.0.0.1') {
+      return 'mock';
     }
-
+    
     for (const [domain, siteKey] of Object.entries(this.supportedSites)) {
       if (hostname.includes(domain)) {
         return siteKey;
@@ -547,19 +512,19 @@ class JianCareerContentScript {
     if (!mappings) return [];
 
     const forms = [];
-    const allSelectors = Object.values(mappings).join(", ");
+    const allSelectors = Object.values(mappings).join(', ');
     const elements = document.querySelectorAll(allSelectors);
-
+    
     if (elements.length > 0) {
       // 找到包含这些元素的表单
       const formElements = new Set();
-      elements.forEach((el) => {
-        const form = el.closest("form") || document.body;
+      elements.forEach(el => {
+        const form = el.closest('form') || document.body;
         formElements.add(form);
       });
       forms.push(...formElements);
     }
-
+    
     return forms;
   }
 
@@ -571,23 +536,22 @@ class JianCareerContentScript {
     const missingFields = [];
     const errors = [];
     const details = [];
-
-    console.log("开始自动填写，网站类型:", siteKey);
-    console.log("简历数据:", profileData);
-    console.log("字段映射:", mappings);
-    console.log("[DEBUG] 完整的profileData内容:", JSON.stringify(profileData, null, 2));
-
+    
+    console.log('开始自动填写，网站类型:', siteKey);
+    console.log('简历数据:', profileData);
+    console.log('字段映射:', mappings);
+    
     // 模拟填写进度
     const progressCallback = (progress) => {
       chrome.runtime.sendMessage({
-        type: "JC_AUTOFILL_PROGRESS",
-        progress: progress,
+        type: 'JC_AUTOFILL_PROGRESS',
+        progress: progress
       });
     };
 
     for (const [fieldType, selector] of Object.entries(mappings)) {
       totalCount++;
-
+      
       try {
         // 查找字段元素
         console.log(`🔍 查找字段 ${fieldType}，选择器: ${selector}`);
@@ -595,28 +559,23 @@ class JianCareerContentScript {
         if (!element) {
           console.log(`❌ 字段 ${fieldType} 未找到，选择器: ${selector}`);
           // 尝试查找所有可能的元素进行调试
-          const allInputs = document.querySelectorAll(
-            "input, select, textarea"
-          );
-          console.log(
-            `📋 页面所有输入元素:`,
-            Array.from(allInputs).map((el) => ({
-              tag: el.tagName,
-              type: el.type,
-              id: el.id,
-              name: el.name,
-              placeholder: el.placeholder,
-            }))
-          );
+          const allInputs = document.querySelectorAll('input, select, textarea');
+          console.log(`📋 页面所有输入元素:`, Array.from(allInputs).map(el => ({
+            tag: el.tagName,
+            type: el.type,
+            id: el.id,
+            name: el.name,
+            placeholder: el.placeholder
+          })));
           failedCount++;
           const errorMsg = `未找到字段: ${fieldType}`;
           missingFields.push(fieldType);
           errors.push(errorMsg);
           details.push({
             field: fieldType,
-            status: "error",
-            value: "",
-            message: errorMsg,
+            status: 'error',
+            value: '',
+            message: errorMsg
           });
           continue;
         }
@@ -626,38 +585,35 @@ class JianCareerContentScript {
           type: element.type,
           id: element.id,
           name: element.name,
-          placeholder: element.placeholder,
+          placeholder: element.placeholder
         });
 
         // 获取字段值
         const value = this.getFieldValue(fieldType, profileData);
         console.log(`📝 字段 ${fieldType} 的值:`, value);
-        console.log(`[DEBUG] 字段 ${fieldType} 从profileData获取的原始值:`, profileData[fieldType]);
         if (!value) {
           console.log(`⚠️ 字段 ${fieldType} 没有对应的值`);
-          console.log(`[DEBUG] profileData中是否存在该字段:`, fieldType in profileData);
           failedCount++;
           missingFields.push(fieldType);
           details.push({
             field: fieldType,
-            status: "skipped",
-            value: "",
-            message: "无数据可填写",
+            status: 'skipped',
+            value: '',
+            message: '无数据可填写'
           });
           continue;
         }
 
         // 填写字段
         console.log(`🚀 正在填写字段: ${fieldType} = ${value}`);
-        console.log(`[DEBUG] 元素类型: ${element.tagName}, 输入类型: ${element.type}, ID: ${element.id}, Name: ${element.name}`);
         const fillResult = await this.fillField(element, value, fieldType);
         if (fillResult !== false) {
           filledCount++;
           details.push({
             field: fieldType,
-            status: "success",
+            status: 'success',
             value: value,
-            message: "填写成功",
+            message: '填写成功'
           });
           console.log(`✅ 字段 ${fieldType} 填写成功`);
         } else {
@@ -666,65 +622,65 @@ class JianCareerContentScript {
           missingFields.push(fieldType);
           details.push({
             field: fieldType,
-            status: "error",
+            status: 'error',
             value: value,
-            message: "填写函数返回false",
+            message: '填写函数返回false'
           });
         }
-
+        
         // 更新进度
         progressCallback(Math.round((filledCount / totalCount) * 100));
-
+        
         // 添加延迟，模拟真实用户操作
         await this.delay(200 + Math.random() * 300);
+        
       } catch (error) {
         failedCount++;
         const errorMsg = `填写字段 ${fieldType} 失败: ${error.message}`;
         errors.push(errorMsg);
         details.push({
           field: fieldType,
-          status: "error",
-          value: "",
-          message: errorMsg,
+          status: 'error',
+          value: '',
+          message: errorMsg
         });
         console.error(`填写字段 ${fieldType} 时出错:`, error);
         missingFields.push(fieldType);
       }
     }
 
-    console.log("自动填写完成，结果:", {
+    console.log('自动填写完成，结果:', {
       filledCount,
       totalCount,
       failedCount,
       missingFields,
-      errors,
+      errors
     });
-    console.log("[DEBUG] 详细填写结果:", details);
 
     // 返回结果
     if (filledCount === 0) {
       return {
         ok: false,
-        reason: "NO_FIELDS_FILLED",
-        detail: "没有成功填写任何字段",
+        reason: 'NO_FIELDS_FILLED',
+        detail: '没有成功填写任何字段',
         filledCount,
         totalCount,
         failed: failedCount,
         missingFields,
         errors,
-        details,
+        details
       };
     } else if (missingFields.length > 0) {
       return {
         ok: false,
-        reason: "PARTIAL",
-        detail: `部分字段未填写: ${missingFields.join(", ")}`,
+        reason: 'PARTIAL',
+        detail: `部分字段未填写: ${missingFields.join(', ')}`,
         filledCount,
         totalCount,
         failed: failedCount,
         missingFields,
         errors,
-        details,
+        details
       };
     } else {
       return {
@@ -732,9 +688,9 @@ class JianCareerContentScript {
         filledCount,
         totalCount,
         failed: failedCount,
-        detail: "所有字段填写成功",
+        detail: '所有字段填写成功',
         errors,
-        details,
+        details
       };
     }
   }
@@ -743,7 +699,7 @@ class JianCareerContentScript {
     // 处理姓名分离逻辑
     let firstName = profileData.firstName;
     let lastName = profileData.lastName;
-
+    
     // 如果没有分离的姓名，尝试从fullName中分离
     if (!firstName && !lastName && profileData.fullName) {
       const fullName = profileData.fullName.trim();
@@ -753,10 +709,10 @@ class JianCareerContentScript {
         firstName = fullName.substring(1);
       } else {
         firstName = fullName;
-        lastName = "";
+        lastName = '';
       }
     }
-
+    
     // 如果还是没有，使用name字段
     if (!firstName && !lastName && profileData.name) {
       const name = profileData.name.trim();
@@ -765,10 +721,10 @@ class JianCareerContentScript {
         firstName = name.substring(1);
       } else {
         firstName = name;
-        lastName = "";
+        lastName = '';
       }
     }
-
+    
     const mapping = {
       name: profileData.name || profileData.fullName || firstName + lastName,
       firstName: firstName || profileData.firstName,
@@ -780,31 +736,22 @@ class JianCareerContentScript {
       salary: profileData.salary || profileData.expectedSalary,
       location: profileData.location || profileData.city,
       skills: profileData.skills || profileData.specialties,
-      resume:
-        profileData.resumeText ||
-        profileData.summary ||
-        profileData.introduction,
-      introduction:
-        profileData.introduction ||
-        profileData.resumeText ||
-        profileData.summary,
+      resume: profileData.resumeText || profileData.summary || profileData.introduction,
+      introduction: profileData.introduction || profileData.resumeText || profileData.summary,
       wechat: profileData.wechat || profileData.wechatId,
       github: profileData.github || profileData.githubUrl,
       university: profileData.university || profileData.school,
       major: profileData.major || profileData.specialty,
       graduationTime: profileData.graduationTime || profileData.graduationDate,
-      gpa: profileData.gpa,
+      gpa: profileData.gpa
     };
-
-    return mapping[fieldType] || "";
+    
+    return mapping[fieldType] || '';
   }
 
   async fillField(element, value, fieldName) {
     if (!element || value === undefined || value === null) {
-      console.log(`❌ 跳过字段 ${fieldName}: 元素不存在或值为空`, {
-        element,
-        value,
-      });
+      console.log(`❌ 跳过字段 ${fieldName}: 元素不存在或值为空`, { element, value });
       return false;
     }
 
@@ -814,297 +761,261 @@ class JianCareerContentScript {
       value: value,
       id: element.id,
       name: element.name,
-      selector: element.outerHTML.substring(0, 100),
+      selector: element.outerHTML.substring(0, 100)
     });
 
     // 聚焦元素
     element.focus();
-
+    
     const tagName = element.tagName.toLowerCase();
-    const inputType = element.type ? element.type.toLowerCase() : "";
-
+    const inputType = element.type ? element.type.toLowerCase() : '';
+    
     try {
-      if (tagName === "select") {
+      if (tagName === 'select') {
         // 处理下拉选择
-        console.log(
-          `[选择框填写] 开始处理select元素，字段: ${fieldName}, 目标值: ${value}`
-        );
-
-        const options = element.querySelectorAll("option");
+        console.log(`[选择框填写] 开始处理select元素，字段: ${fieldName}, 目标值: ${value}`);
+        
+        const options = element.querySelectorAll('option');
         console.log(`[选择框填写] 找到 ${options.length} 个选项:`);
-
+        
         // 记录所有选项用于调试
         options.forEach((option, index) => {
-          console.log(
-            `[选择框填写] 选项${index}: text="${option.textContent.trim()}", value="${
-              option.value
-            }"`
-          );
+          console.log(`[选择框填写] 选项${index}: text="${option.textContent.trim()}", value="${option.value}"`);
         });
-
+        
         let matched = false;
         let matchedOption = null;
-        let matchType = "";
-
+        let matchType = '';
+        
         // 优先进行精确匹配
         for (const option of options) {
           const optionText = option.textContent.trim();
           const optionValue = option.value;
-
+          
           // 精确文本匹配
           if (optionText === value) {
             matched = true;
             matchedOption = option;
-            matchType = "精确文本匹配";
+            matchType = '精确文本匹配';
             break;
           }
-
+          
           // 精确值匹配
           if (optionValue === value) {
             matched = true;
             matchedOption = option;
-            matchType = "精确值匹配";
+            matchType = '精确值匹配';
             break;
           }
         }
-
+        
         // 如果精确匹配失败，尝试模糊匹配
         if (!matched) {
           for (const option of options) {
             const optionText = option.textContent.trim();
             const optionValue = option.value;
-
+            
             // 模糊文本匹配
             if (this.fuzzyMatch(optionText, value)) {
               matched = true;
               matchedOption = option;
-              matchType = "模糊文本匹配";
-              console.log(
-                `[选择框填写] 模糊匹配成功: "${optionText}" 匹配 "${value}"`
-              );
+              matchType = '模糊文本匹配';
+              console.log(`[选择框填写] 模糊匹配成功: "${optionText}" 匹配 "${value}"`);
               break;
             }
-
+            
             // 模糊值匹配
             if (this.fuzzyMatch(optionValue, value)) {
               matched = true;
               matchedOption = option;
-              matchType = "模糊值匹配";
-              console.log(
-                `[选择框填写] 模糊匹配成功: "${optionValue}" 匹配 "${value}"`
-              );
+              matchType = '模糊值匹配';
+              console.log(`[选择框填写] 模糊匹配成功: "${optionValue}" 匹配 "${value}"`);
               break;
             }
           }
         }
-
+        
         if (matched && matchedOption) {
-          console.log(
-            `[选择框填写] 匹配成功! 匹配类型: ${matchType}, 选中选项: "${matchedOption.textContent.trim()}" (value: "${
-              matchedOption.value
-            }")`
-          );
-
+          console.log(`[选择框填写] 匹配成功! 匹配类型: ${matchType}, 选中选项: "${matchedOption.textContent.trim()}" (value: "${matchedOption.value}")`);
+          
           // 选中匹配的选项
           matchedOption.selected = true;
           element.value = matchedOption.value;
-
+          
           // 触发相关事件
-          element.dispatchEvent(new Event("change", { bubbles: true }));
-          element.dispatchEvent(new Event("input", { bubbles: true }));
-
+          element.dispatchEvent(new Event('change', { bubbles: true }));
+          element.dispatchEvent(new Event('input', { bubbles: true }));
+          
           console.log(`[选择框填写] 事件已触发，当前选中值: ${element.value}`);
           return true;
         } else {
-          console.warn(
-            `[选择框填写] 未找到匹配的选项，字段: ${fieldName}, 目标值: ${value}`
-          );
-          console.warn(
-            `[选择框填写] 可用选项:`,
-            Array.from(options).map((opt) => ({
-              text: opt.textContent.trim(),
-              value: opt.value,
-            }))
-          );
-
+          console.warn(`[选择框填写] 未找到匹配的选项，字段: ${fieldName}, 目标值: ${value}`);
+          console.warn(`[选择框填写] 可用选项:`, Array.from(options).map(opt => ({
+            text: opt.textContent.trim(),
+            value: opt.value
+          })));
+          
           // 如果没有匹配到，选择第一个非空选项
           if (options.length > 1) {
             element.value = options[1].value;
-            element.dispatchEvent(new Event("change", { bubbles: true }));
-            element.dispatchEvent(new Event("input", { bubbles: true }));
-            console.log(
-              `[选择框填写] 使用默认选项: ${options[1].textContent.trim()}`
-            );
+            element.dispatchEvent(new Event('change', { bubbles: true }));
+            element.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log(`[选择框填写] 使用默认选项: ${options[1].textContent.trim()}`);
           }
         }
-
+        
         return matched;
-      } else if (inputType === "radio") {
+        
+      } else if (inputType === 'radio') {
         // 处理单选框
-        const radioGroup = document.querySelectorAll(
-          `input[name="${element.name}"]`
-        );
+        const radioGroup = document.querySelectorAll(`input[name="${element.name}"]`);
         let matched = false;
         for (const radio of radioGroup) {
-          if (
-            radio.value === value ||
-            radio.nextElementSibling?.textContent?.includes(value)
-          ) {
+          if (radio.value === value || 
+              radio.nextElementSibling?.textContent?.includes(value)) {
             radio.checked = true;
             matched = true;
             break;
           }
         }
         return matched;
-      } else if (inputType === "checkbox") {
+        
+      } else if (inputType === 'checkbox') {
         // 处理复选框
         element.checked = Boolean(value);
         return true;
-      } else if (
-        tagName === "textarea" ||
-        inputType === "text" ||
-        inputType === "email" ||
-        inputType === "tel" ||
-        inputType === "password"
-      ) {
+        
+      } else if (tagName === 'textarea' || 
+                 inputType === 'text' || 
+                 inputType === 'email' || 
+                 inputType === 'tel' || 
+                 inputType === 'password') {
         // 处理文本输入
-        element.value = "";
-
+        element.value = '';
+        
         // 模拟逐字输入
         for (let i = 0; i < value.length; i++) {
           element.value += value[i];
-          element.dispatchEvent(new Event("input", { bubbles: true }));
+          element.dispatchEvent(new Event('input', { bubbles: true }));
           await this.delay(50 + Math.random() * 50); // 随机延迟
         }
         return true;
       }
-
+      
       // 触发所有相关事件
-      element.dispatchEvent(new Event("input", { bubbles: true }));
-      element.dispatchEvent(new Event("change", { bubbles: true }));
-      element.dispatchEvent(new Event("blur", { bubbles: true }));
-
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+      element.dispatchEvent(new Event('change', { bubbles: true }));
+      element.dispatchEvent(new Event('blur', { bubbles: true }));
+      
       // 特殊处理：触发React/Vue等框架的事件
       if (element._valueTracker) {
-        element._valueTracker.setValue("");
+        element._valueTracker.setValue('');
       }
-
+      
       return true;
+      
     } catch (error) {
-      console.warn("填写字段时出错:", error);
+      console.warn('填写字段时出错:', error);
       // 降级处理：直接设置值
-      if (
-        tagName !== "select" &&
-        inputType !== "radio" &&
-        inputType !== "checkbox"
-      ) {
+      if (tagName !== 'select' && inputType !== 'radio' && inputType !== 'checkbox') {
         element.value = value;
-        element.dispatchEvent(new Event("input", { bubbles: true }));
-        element.dispatchEvent(new Event("change", { bubbles: true }));
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+        element.dispatchEvent(new Event('change', { bubbles: true }));
         return true;
       }
       return false;
     }
   }
-
+  
   // 模糊匹配辅助方法
   fuzzyMatch(text1, text2) {
     if (!text1 || !text2) return false;
-
+    
     const normalizeText = (str) => {
-      return str.toString().toLowerCase().trim().replace(/\s+/g, "");
+      return str.toString().toLowerCase().trim().replace(/\s+/g, '');
     };
-
+    
     const normalizedText = normalizeText(text1);
     const normalizedTarget = normalizeText(text2);
-
+    
     // 精确匹配
     if (normalizedText === normalizedTarget) {
       return true;
     }
-
+    
     // 包含匹配
-    if (
-      normalizedText.includes(normalizedTarget) ||
-      normalizedTarget.includes(normalizedText)
-    ) {
+    if (normalizedText.includes(normalizedTarget) || normalizedTarget.includes(normalizedText)) {
       return true;
     }
-
+    
     // 性别字段特殊匹配规则
     const genderMappings = {
-      男: ["male", "man", "mr", "先生", "boy"],
-      女: ["female", "woman", "ms", "miss", "mrs", "女士", "girl"],
-      male: ["男", "man", "mr", "先生", "boy"],
-      female: ["女", "woman", "ms", "miss", "mrs", "女士", "girl"],
+      '男': ['male', 'man', 'mr', '先生', 'boy'],
+      '女': ['female', 'woman', 'ms', 'miss', 'mrs', '女士', 'girl'],
+      'male': ['男', 'man', 'mr', '先生', 'boy'],
+      'female': ['女', 'woman', 'ms', 'miss', 'mrs', '女士', 'girl']
     };
-
+    
     // 检查性别映射
     if (genderMappings[normalizedTarget]) {
-      return genderMappings[normalizedTarget].some(
-        (mapping) =>
-          normalizedText.includes(mapping) || mapping.includes(normalizedText)
+      return genderMappings[normalizedTarget].some(mapping => 
+        normalizedText.includes(mapping) || mapping.includes(normalizedText)
       );
     }
-
+    
     if (genderMappings[normalizedText]) {
-      return genderMappings[normalizedText].some(
-        (mapping) =>
-          normalizedTarget.includes(mapping) ||
-          mapping.includes(normalizedTarget)
+      return genderMappings[normalizedText].some(mapping => 
+        normalizedTarget.includes(mapping) || mapping.includes(normalizedTarget)
       );
     }
-
+    
     // 学历字段特殊匹配规则
     const educationMappings = {
-      高中: ["high school", "secondary", "中学"],
-      大专: ["college", "associate", "专科"],
-      本科: ["bachelor", "undergraduate", "学士"],
-      硕士: ["master", "graduate", "研究生"],
-      博士: ["doctor", "phd", "doctorate"],
+      '高中': ['high school', 'secondary', '中学'],
+      '大专': ['college', 'associate', '专科'],
+      '本科': ['bachelor', 'undergraduate', '学士'],
+      '硕士': ['master', 'graduate', '研究生'],
+      '博士': ['doctor', 'phd', 'doctorate']
     };
-
+    
     // 检查学历映射
     for (const [key, values] of Object.entries(educationMappings)) {
       if (normalizedTarget.includes(key) || key.includes(normalizedTarget)) {
-        return values.some(
-          (mapping) =>
-            normalizedText.includes(mapping) || mapping.includes(normalizedText)
+        return values.some(mapping => 
+          normalizedText.includes(mapping) || mapping.includes(normalizedText)
         );
       }
       if (normalizedText.includes(key) || key.includes(normalizedText)) {
-        return values.some(
-          (mapping) =>
-            normalizedTarget.includes(mapping) ||
-            mapping.includes(normalizedTarget)
+        return values.some(mapping => 
+          normalizedTarget.includes(mapping) || mapping.includes(normalizedTarget)
         );
       }
     }
-
+    
     return false;
   }
-
+  
   // 通知页面填写完成
   notifyPageFillComplete(result) {
     const message = {
-      source: "JIANCAREER_EXTENSION",
-      type: "AUTOFILL_COMPLETE",
+      source: 'JIANCAREER_EXTENSION',
+      type: 'AUTOFILL_COMPLETE',
       timestamp: Date.now(),
-      result: result,
+      result: result
     };
-
-    window.postMessage(message, "*");
-    console.log("[Content Script] 发送填写完成消息:", message);
+    
+    window.postMessage(message, '*');
+    console.log('[Content Script] 发送填写完成消息:', message);
   }
 
   delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }
 
 // 初始化 Content Script
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
     new JianCareerContentScript();
   });
 } else {

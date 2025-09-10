@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简历自动填写插件 - 教学演示页面</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .container {
+            width: 60%; 
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 0;
+            box-shadow: none;
+            border: none;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2c5aa0;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+        
+        .header p {
+            margin: 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .tutorial-section {
+            background: #f8f9ff;
+            padding: 25px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        
+        .tutorial-title {
+            color: #2d3748;
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tutorial-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            background: #2c5aa0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .tutorial-steps {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .tutorial-steps li {
+            background: white;
+            margin: 10px 0;
+            padding: 15px 20px;
+            border-radius: 4px;
+            border-left: 4px solid #2c5aa0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .form-section {
+            padding: 30px;
+        }
+        
+        .form-title {
+            color: #2d3748;
+            font-size: 1.6em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .required {
+            color: #e53e3e;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2c5aa0;
+            box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.1);
+        }
+        
+        select {
+            cursor: pointer;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .submit-section {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .btn {
+            background: #2c5aa0;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #1e3d6f;
+        }
+        
+        .demo-notice {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .extension-hint {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #495057;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .extension-hint strong {
+            display: block;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .form-section {
+                padding: 20px;
+            }
+            
+            .tutorial-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>简历自动填写插件</h1>
+            <p>体验一键填写求职表单的便捷功能</p>
+        </div>
+        
+        <div class="tutorial-section">
+            <div class="tutorial-title">
+                <div class="tutorial-icon">?</div>
+                使用教程
+            </div>
+            <ol class="tutorial-steps">
+                <li><strong>第一步：</strong> 点击浏览器右上角的插件图标
+                    <div style="margin-top: 8px; color: #666; font-size: 0.9em;">提示：插件图标通常在地址栏右侧的扩展程序区域</div>
+                </li>
+                <li><strong>第二步：</strong> 在弹出的窗口中点击"一键填写"按钮
+                    <div style="margin-top: 8px; color: #666; font-size: 0.9em;">提示：系统已为您预设了示例数据，您可以直接使用或修改</div>
+                </li>
+                <li><strong>第三步：</strong> 观察下方表单自动填写过程
+                    <div style="margin-top: 8px; color: #666; font-size: 0.9em;">提示：填写完成后会显示详细的填写结果统计</div>
+                </li>
+                <li><strong>第四步：</strong> 查看填写结果和反馈信息</li>
+            </ol>
+            
+            <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 20px; margin-top: 20px;">
+                <h3 style="margin: 0 0 10px 0; color: #2c5aa0;">立即体验</h3>
+                <p style="margin: 0 0 15px 0; color: #4a5568;">下方是一个模拟的企业招聘表单，您可以使用插件在此页面进行填写测试。</p>
+                <div style="background: #e9ecef; padding: 12px; border-radius: 4px; border-left: 4px solid #2c5aa0;">
+                    <strong style="color: #2c5aa0;">现在就试试吧！</strong> 点击浏览器插件图标，然后点击"一键填写"按钮。
+                </div>
+            </div>
+        </div>
+        
+        <div class="extension-hint">
+            <strong>提示：请确保已安装简历自动填写插件</strong>
+            如果还未安装，请先安装插件后再进行演示
+        </div>
+        
+        <div class="form-section">
+            <h2 class="form-title">模拟求职申请表单</h2>
+            
+            <div class="demo-notice">
+                这是一个演示页面，所有数据仅用于展示插件功能，不会被实际提交
+            </div>
+            
+            <!-- 职位要求描述 -->
+            <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 24px; margin: 20px 0;">
+                <h3 style="color: #2c5aa0; margin: 0 0 16px 0; font-size: 1.2em;">软件开发工程师（数据科学方向）</h3>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #495057; margin: 0 0 12px 0; font-size: 1em;">岗位职责</h4>
+                    <ol style="margin: 0; padding-left: 20px; color: #6c757d; line-height: 1.6;">
+                        <li>主导通过因果分析的方法，其中主要是A/B实验，来衡量业务和技术动作的增量价值，推动data first的意识价值交付的工作机制的落地；</li>
+                        <li>和各场景的业务紧密协同，深入理解业务和产品，将业务和产品的问题转化为数据和技术的问题，并且设计合理的解决方案；</li>
+                        <li>通过主动的数据探索和挖掘来发现改进产品和业务的机会；</li>
+                        <li>调研新的，适用于业务的因果推断、统计推断，异常检测以及其它数据科学的方法，并把这些方法应用到实际业务问题。</li>
+                    </ol>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #495057; margin: 0 0 12px 0; font-size: 1em;">任职要求</h4>
+                    <ol style="margin: 0; padding-left: 20px; color: #6c757d; line-height: 1.6;">
+                        <li>本科及以上学历，在统计学、应用数学、因果推断领域的其中之一，有比较深入科研经历；</li>
+                        <li>有比较强的调研能力，对sql、python等数据分析和数据科学实施的开发语言和工具有实践经验；</li>
+                        <li>有较强的逻辑分析能力及沟通技巧，出色的团队协作能力；</li>
+                        <li>具备以下经历者优先：
+                            <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+                                <li>在统计学领域内的权威期刊（JASA、JRSSB等）或顶级会议（IMS-China ICSP，IMS-NRC，STAT等）发表过文章；</li>
+                                <li>在各类国际的计算机编程大赛获得优异成绩；</li>
+                                <li>组织或深度参与过AB实验设计。</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h4 style="color: #495057; margin: 0 0 12px 0; font-size: 1em;">工作城市</h4>
+                    <p style="margin: 0; color: #6c757d; line-height: 1.6;">北京市、上海市</p>
+                </div>
+            </div>
+            
+            <form id="demo-form" action="#" method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">姓名 <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">性别 <span class="required">*</span></label>
+                        <select id="gender" name="gender" required>
+                            <option value="">请选择性别</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">邮箱地址 <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="example@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">联系电话 <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="请输入手机号码">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="university">毕业院校<span class="required">*</span></label>
+                        <input type="text" id="university" name="university" placeholder="请输入毕业院校" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="major">专业<span class="required">*</span></label>
+                        <input type="text" id="major" name="major" placeholder="请输入专业" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+                        <label for="education">学历</label>
+                        <input type="text" id="education" name="education" placeholder="请输入学历水平" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">所在城市</label>
+                        <input type="text" id="location" name="location" placeholder="如：北京市">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="github">Github</label>
+                        <input type="text" id="github" name="github" placeholder="请输入Github地址" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gpa">GPA</label>
+                        <input type="text" id="gpa" name="gpa" placeholder="请输入GPA" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="skills">专业技能</label>
+                    <textarea id="skills" name="skills" placeholder="请描述您的专业技能，如：JavaScript, Python, React等"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="introduction">个人简介</label>
+                    <textarea id="introduction" name="introduction" placeholder="请简要介绍您的工作经历和个人优势"></textarea>
+                </div>
+                
+                <div class="submit-section">
+                    <button type="submit" class="btn">提交申请</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // 监听来自插件的消息
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'SJ_DETECT_V1') {
+                // 响应插件的检测消息
+                event.source.postMessage({
+                    type: 'SJ_ACK_V1',
+                    success: true,
+                    message: '页面已准备好进行自动填写演示'
+                }, '*');
+            }
+            
+            if (event.data.source === 'JIANCAREER_EXTENSION') {
+                console.log('收到插件消息:', event.data);
+                
+                if (event.data.type === 'TUTORIAL_DEMO') {
+                    // 处理教程演示消息
+                    showTutorialMessage('插件正在演示自动填写功能...', 'info');
+                } else if (event.data.type === 'AUTOFILL_COMPLETE') {
+                    // 处理填写完成消息
+                    const result = event.data.result;
+                    let message = '';
+                    let type = 'success';
+                    
+                    if (result.success) {
+                        message = `填写完成！成功填写 ${result.filled}/${result.total} 个字段`;
+                        if (result.filled === result.total) {
+                            message += ' 🎉';
+                        }
+                    } else {
+                        message = `填写失败：${result.error || '未知错误'}`;
+                        type = 'error';
+                    }
+                    
+                    showTutorialMessage(message, type);
+                    
+                    // 如果填写成功，显示额外的成功提示
+                    if (result.success && result.filled > 0) {
+                        setTimeout(() => {
+                            alert(`恭喜！插件已成功帮您填写了表单。\n\n填写详情：\n- 成功填写：${result.filled} 个字段\n- 总字段数：${result.total} 个\n\n您现在可以检查填写的内容，然后提交表单。`);
+                        }, 1000);
+                    }
+                }
+            }
+        });
+        
+        function showTutorialMessage(message, type = 'info') {
+            const colors = {
+                info: '#2196F3',
+                success: '#4CAF50',
+                error: '#f44336',
+                warning: '#ff9800'
+            };
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${colors[type] || colors.info};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 14px;
+                max-width: 300px;
+                word-wrap: break-word;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            // 添加动画样式
+            if (!document.getElementById('message-animation-style')) {
+                const style = document.createElement('style');
+                style.id = 'message-animation-style';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                if (document.body.contains(messageDiv)) {
+                    messageDiv.style.animation = 'slideIn 0.3s ease-out reverse';
+                    setTimeout(() => {
+                        if (document.body.contains(messageDiv)) {
+                            document.body.removeChild(messageDiv);
+                        }
+                    }, 300);
+                }
+            }, type === 'error' ? 5000 : 3000);
+        }
+        
+        // 表单提交处理
+        document.getElementById('demo-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('🎉 演示完成！\n\n这是一个演示页面，表单数据不会被实际提交。\n\n感谢您体验简历自动填写插件！');
+        });
+        
+        // 页面加载完成后发送准备就绪消息
+        window.addEventListener('load', function() {
+            console.log('[Mock Form] 教学演示页面已加载完成');
+            
+            // 向插件发送页面准备就绪的消息
+            if (window.chrome && window.chrome.runtime) {
+                try {
+                    window.chrome.runtime.sendMessage({
+                        type: 'PAGE_READY',
+                        url: window.location.href,
+                        title: document.title
+                    });
+                } catch (error) {
+                    console.log('[Mock Form] 插件通信失败，这是正常现象（在非插件环境中）');
+                }
+            }
+        });
+        
+        // 添加表单字段变化监听，用于演示
+        const formInputs = document.querySelectorAll('input, select, textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                // 添加填写动画效果
+                this.style.backgroundColor = '#e8f5e8';
+                setTimeout(() => {
+                    this.style.backgroundColor = '';
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
